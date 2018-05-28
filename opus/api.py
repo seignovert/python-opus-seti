@@ -3,6 +3,7 @@ import requests
 
 from .url import clean
 from .data import Data
+from .metadata import Metadata
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -60,3 +61,7 @@ class API(object):
             kwargs['limit'] = limit
             kwargs['page'] = page
         return Data(self.load('data', **kwargs))
+
+    def metadata(self, ring_obs_id):
+        return Metadata(self.load('metadata/'+ring_obs_id))
+        
