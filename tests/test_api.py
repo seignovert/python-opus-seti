@@ -77,6 +77,7 @@ def test_api_data(api):
         or (responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&limit=1591&target=pan') # Python < 3.6 (Not ordered kwargs)
     assert responses.calls[1].response.text == data
 
+    assert len(resp) == 1591 
 
 @responses.activate
 def test_api_data_limit(api):
@@ -92,6 +93,7 @@ def test_api_data_limit(api):
         or (responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&limit=10&target=pan&page=2')
     assert responses.calls[0].response.text == data
 
+    assert len(resp) == 10
 
 @responses.activate
 def test_api_metadata(api):

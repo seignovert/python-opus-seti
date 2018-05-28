@@ -21,6 +21,7 @@ class Data(object):
         try:
             result = self.json['page'][self.index]
         except IndexError:
+            self.index = 0
             raise StopIteration
         self.index += 1
         return result

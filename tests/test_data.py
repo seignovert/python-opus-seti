@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-import responses
+
 import json as JSON
 
 from opus.data import Data

@@ -63,5 +63,6 @@ class API(object):
         return Data(self.load('data', **kwargs))
 
     def metadata(self, ring_obs_id):
+        '''Get detail for a single observation'''
         return Metadata(self.load('metadata/'+ring_obs_id))
         
