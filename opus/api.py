@@ -2,6 +2,7 @@
 import requests
 
 from .url import clean
+from .data import Data
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -58,4 +59,4 @@ class API(object):
         else:
             kwargs['limit'] = limit
             kwargs['page'] = page
-        return self.load('data', **kwargs)
+        return Data(self.load('data', **kwargs))
