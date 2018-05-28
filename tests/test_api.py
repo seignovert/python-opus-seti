@@ -79,6 +79,7 @@ def test_api_data(api):
 
     assert len(resp) == 1591 
 
+
 @responses.activate
 def test_api_data_limit(api):
     data = open('tests/api/data.json', 'r').read()
@@ -107,3 +108,45 @@ def test_api_metadata(api):
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == 'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json'
     assert responses.calls[0].response.text == metadata
+
+    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+
+@responses.activate
+def test_api_images(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    images = open('tests/api/images/med.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/images/med.json',
+                  body=images)
+
+    resp = api.images(size='med', planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+    assert (responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591') \
+        or (responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&limit=1591&target=pan')
+    assert responses.calls[1].response.text == images
+
+@responses.activate
+def test_api_images_limits(api):
+    images = open('tests/api/images/med.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/images/med.json',
+                  body=images)
+
+    resp = api.images(size='med', limit=10, page=2, planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 1
+    assert (responses.calls[0].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=10&page=2') \
+        or (responses.calls[0].request.url == 'http://localhost/images/med.json?planet=Saturn&limit=10&target=pan&page=2')
+    assert responses.calls[0].response.text == images
+
+    assert len(resp) == 10
+
+def test_api_images_size_err(api):
+    with pytest.raises(ValueError):
+        api.images('abc')
