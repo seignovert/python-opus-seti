@@ -8,6 +8,7 @@ from .images import Images, Image
 from .files import Files, File
 from .mults import Mults
 from .range import Range
+from .fields import Field
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -112,3 +113,7 @@ class API(object):
     def range(self, param='ringradius1', **kwargs):
         '''Get range endpoints for a field, given a search'''
         return Range(param, self.load('meta/range/endpoints/'+param, **kwargs))
+
+    def field(self, field):
+        '''Get information about a particular field'''
+        return Field(field, self.load('fields/'+field))

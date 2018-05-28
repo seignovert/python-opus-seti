@@ -275,3 +275,19 @@ def test_api_range(api):
     assert resp.min == 60000
     assert resp.max == 1.29e+07
     assert resp.nulls == 115573
+
+
+@responses.activate
+def test_api_field(api):
+    field = open('tests/api/fields/target.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields/target.json',
+                  body=field)
+
+    resp = api.field('target')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/fields/target.json'
+    assert responses.calls[0].response.text == field
+
+    assert resp.label == 'Intended Target Name'
