@@ -44,7 +44,7 @@ Usage
 
     >>> from opus import api
 
-    >>> api.getData(target='Pan')
+    >>> api.data(planet='Saturn', target='pan')
 
 Note
 ----
