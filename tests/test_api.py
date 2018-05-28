@@ -147,6 +147,30 @@ def test_api_images_limits(api):
 
     assert len(resp) == 10
 
+@responses.activate
+def test_api_image(api):
+    image = open('tests/api/image/med/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
+                   body=image)
+
+    resp = api.image('S_IMG_CO_ISS_1459551972_N')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].response.text == image
+
+    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+    assert resp.path == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/'
+    assert resp.img == 'COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
+    assert resp.url == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
+
+
 def test_api_images_size_err(api):
     with pytest.raises(ValueError):
         api.images('abc')
+
+
+def test_api_image_size_err(api):
+    with pytest.raises(ValueError):
+        api.image('S_IMG_CO_ISS_1459551972_N', size='abc')

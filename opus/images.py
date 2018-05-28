@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 class Image(object):
-    def __init__(self, json):
-        self.path = json['path']
-        self.img = json['img']
-        self.ring_obs_id = json['ring_obs_id']
+    def __init__(self, ring_obs_id, path, img):
+        self.ring_obs_id = ring_obs_id
+        self.path = path
+        self.img = img
 
     def __repr__(self):
         return 'OPUS API Image object: {}'.format(self.ring_obs_id)
@@ -30,14 +30,15 @@ class Images(object):
         return self.count
 
     def __getitem__(self, index):
-        return Image(self.json['data'][index])
+        img = self.json['data'][index]
+        return Image(img['ring_obs_id'], img['path'], img['img'])
 
     def __iter__(self):
         return self
 
     def __next__(self):
         try:
-            result = Image(self.json['data'][self.index])
+            result = self.__getitem__(self.index)
         except IndexError:
             self.index = 0
             raise StopIteration

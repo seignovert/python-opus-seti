@@ -4,7 +4,7 @@ import requests
 from .url import clean
 from .data import Data
 from .metadata import Metadata
-from .images import Images
+from .images import Images, Image
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -78,3 +78,11 @@ class API(object):
             kwargs['limit'] = limit
             kwargs['page'] = page
         return Images(self.load('images/'+size, **kwargs), size)
+
+    def image(self, ring_obs_id, size='med'):
+        '''Get images for a single observation'''
+        size = size.lower()
+        if size not in ['thumb','small','med','full']:
+            raise ValueError('Image size {} unknown (available: [thumb,small,med,full])'.format(size))
+        json = self.load('image/'+size+'/'+ring_obs_id)
+        return Image(ring_obs_id, json['path'], json['data'][0]['img'])
