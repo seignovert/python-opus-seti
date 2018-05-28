@@ -6,6 +6,7 @@ from .data import Data
 from .metadata import Metadata
 from .images import Images, Image
 from .files import Files, File
+from .mults import Mults
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -101,3 +102,8 @@ class API(object):
             kwargs['limit'] = limit
             kwargs['page'] = page
         return Files(self.load('files', **kwargs))
+
+    def mults(self, param='target', **kwargs):
+        '''Returns all possible values for a given multiple choice
+        field, given a search, and the result count for each value'''
+        return Mults(self.load('meta/mults/'+param, **kwargs))

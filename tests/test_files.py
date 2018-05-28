@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-import responses
+
 import json as JSON
 
 from opus.files import *
@@ -61,7 +61,7 @@ def test_file_list_iss(file_iss):
 
 def test_file_list_vims(file_vims):
     assert isinstance(repr(file_vims.raw_spectral_image_cube), str)
-    
+
 def test_file_list_err():
     with pytest.raises(ValueError):
         FileList(['file.txt'])

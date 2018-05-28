@@ -242,3 +242,18 @@ def test_api_files_limit(api):
     assert responses.calls[0].response.text == files
 
     assert len(resp) == 10
+
+@responses.activate
+def test_api_mults(api):
+    mults = open('tests/api/meta/mults/target.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/mults/target.json',
+                  body=mults)
+
+    resp = api.mults('target', planet='Saturn')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/meta/mults/target.json?planet=Saturn'
+    assert responses.calls[0].response.text == mults
+
+    assert len(resp) == 63
