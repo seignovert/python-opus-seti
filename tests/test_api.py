@@ -70,7 +70,8 @@ def test_data(api):
 
     assert len(responses.calls) == 2
     assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-    assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
+    assert (responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591') \
+        or (responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&limit=1591&target=pan') # Python < 3.6 (Not ordered kwargs)
     assert responses.calls[1].response.text == data
 
 
@@ -84,5 +85,6 @@ def test_data_limit(api):
     resp = api.data(limit=10, page=2, planet='Saturn', target='pan')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=10&page=2'
+    assert (responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=10&page=2') \
+        or (responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&limit=10&target=pan&page=2')
     assert responses.calls[0].response.text == data
