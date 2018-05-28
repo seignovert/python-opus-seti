@@ -25,6 +25,9 @@ class Data(object):
         self.index += 1
         return result
 
+    def next(self):
+        return self.__next__()
+
     @property
     def count(self):
         return int(self.json['count'])

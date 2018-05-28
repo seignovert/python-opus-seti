@@ -44,5 +44,6 @@ def test_data_images(data):
 
 
 def test_data_iter(data):
+    data.next() == data[0]
     for ii, img in enumerate(data):
         img = data[ii]
