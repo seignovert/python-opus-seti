@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import requests
-import json
 
 from .url import clean
 
@@ -43,9 +42,9 @@ class API(object):
 
         response = requests.get(url)
         if(response.ok):
-            return json.loads(response.content)
+            return response.json()
         else:
-            raise RuntimeError('The OPUS API can not be reached')
+            raise RuntimeError('The request at {} failed'.format(url))
 
     def count(self, **kwargs):
         '''Get result count for a search'''

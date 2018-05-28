@@ -1,6 +1,7 @@
 coverage
 flake8
 mock
+responses
 pbr
 pytest
 pytest-cov

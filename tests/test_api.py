@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import pytest
+import responses
 
 from opus.api import API
 
 @pytest.fixture
 def url():
-    return 'http://127.0.0.1:8000/'
+    return 'http://localhost/'
 
 @pytest.fixture
 def api(url):
@@ -28,9 +29,60 @@ def test_request_fmt_err(api):
     with pytest.raises(ValueError):
         api.request('data', fmt='txt')
 
-def test_count(api):
-    assert api.count(planet='Saturn', target='pan') == 1591
 
-# def test_data(api):
-#     data = api.data(limit=1, page=2, target='pan')
-#     assert data['Ring Observation ID'] == 'S_IMG_CO_ISS_1488190255_N'
+@responses.activate
+def test_load_err(url):
+    responses.add(responses.GET,
+                  'http://localhost/data.json',
+                  json={'error': 'not found'}, status=404)
+
+    with pytest.raises(RuntimeError):
+        API(url, verbose=True).load('data')
+
+@responses.activate
+def test_count(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                   'http://localhost/meta/result_count.json',
+                   body=result_count)
+
+    resp = api.count(planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+    assert responses.calls[0].response.text == result_count
+    
+    assert resp == 1591
+
+@responses.activate
+def test_data(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    data = open('tests/api/data_all.json', 'r').read()
+    responses.add(responses.GET,
+                   'http://localhost/data.json',
+                   body=data)
+
+    resp = api.data(planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+    assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
+    assert responses.calls[1].response.text == data
+
+
+@responses.activate
+def test_data_limit(api):
+    data = open('tests/api/data.json', 'r').read()
+    responses.add(responses.GET,
+                   'http://localhost/data.json',
+                   body=data)
+
+    resp = api.data(limit=10, page=2, planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=10&page=2'
+    assert responses.calls[0].response.text == data
