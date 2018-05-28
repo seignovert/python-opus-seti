@@ -5,6 +5,7 @@ from .url import clean
 from .data import Data
 from .metadata import Metadata
 from .images import Images, Image
+from .files import Files, File
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -86,3 +87,17 @@ class API(object):
             raise ValueError('Image size {} unknown (available: [thumb,small,med,full])'.format(size))
         json = self.load('image/'+size+'/'+ring_obs_id)
         return Image(ring_obs_id, json['path'], json['data'][0]['img'])
+
+    def file(self, ring_obs_id):
+        '''Get files for a single observation'''
+        json = self.load('files/'+ring_obs_id)
+        return File(ring_obs_id, json['data'][ring_obs_id])
+
+    def files(self, limit=None, page=1, **kwargs):
+        '''Get all files results for a search'''
+        if limit is None:
+            kwargs['limit'] = self.count(**kwargs)
+        else:
+            kwargs['limit'] = limit
+            kwargs['page'] = page
+        return Files(self.load('files', **kwargs))

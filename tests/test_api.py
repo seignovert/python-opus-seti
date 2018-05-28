@@ -161,9 +161,6 @@ def test_api_image(api):
     assert responses.calls[0].response.text == image
 
     assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
-    assert resp.path == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/'
-    assert resp.img == 'COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
-    assert resp.url == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
 
 
 def test_api_images_size_err(api):
@@ -174,3 +171,58 @@ def test_api_images_size_err(api):
 def test_api_image_size_err(api):
     with pytest.raises(ValueError):
         api.image('S_IMG_CO_ISS_1459551972_N', size='abc')
+
+
+@responses.activate
+def test_api_file(api):
+    json = open(
+        'tests/api/files/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json',
+                  body=json)
+
+    resp = api.file('S_IMG_CO_ISS_1459551972_N')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].response.text == json
+
+    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+
+
+@responses.activate
+def test_api_files(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    files = open('tests/api/files.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files.json',
+                  body=files)
+
+    resp = api.files(planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+    assert (responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591') \
+        or (responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&limit=1591&target=pan')
+    assert responses.calls[1].response.text == files
+
+
+@responses.activate
+def test_api_files_limits(api):
+    files = open('tests/api/files.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files.json',
+                  body=files)
+
+    resp = api.files(limit=10, page=2, planet='Saturn', target='pan')
+
+    assert len(responses.calls) == 1
+    assert (responses.calls[0].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=10&page=2') \
+        or (responses.calls[0].request.url == 'http://localhost/files.json?planet=Saturn&limit=10&target=pan&page=2')
+    assert responses.calls[0].response.text == files
+
+    assert len(resp) == 10

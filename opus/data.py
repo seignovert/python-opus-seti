@@ -19,7 +19,7 @@ class Data(object):
 
     def __next__(self):
         try:
-            result = self.json['page'][self.index]
+            result = self.__getitem__(self.index)
         except IndexError:
             self.index = 0
             raise StopIteration
