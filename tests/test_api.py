@@ -257,3 +257,21 @@ def test_api_mults(api):
     assert responses.calls[0].response.text == mults
 
     assert len(resp) == 63
+
+@responses.activate
+def test_api_range(api):
+    range_endpoints = open('tests/api/meta/range/endpoints/ringradius1.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/range/endpoints/ringradius1.json',
+                  body=range_endpoints)
+
+    resp = api.range('ringradius1', target='Saturn')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/meta/range/endpoints/ringradius1.json?target=Saturn'
+    assert responses.calls[0].response.text == range_endpoints
+
+    assert repr(resp) == 'OPUS API Range endpoints for field: ringradius1'
+    assert resp.min == 60000
+    assert resp.max == 1.29e+07
+    assert resp.nulls == 115573

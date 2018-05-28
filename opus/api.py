@@ -7,6 +7,7 @@ from .metadata import Metadata
 from .images import Images, Image
 from .files import Files, File
 from .mults import Mults
+from .range import Range
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -107,3 +108,7 @@ class API(object):
         '''Returns all possible values for a given multiple choice
         field, given a search, and the result count for each value'''
         return Mults(self.load('meta/mults/'+param, **kwargs))
+
+    def range(self, param='ringradius1', **kwargs):
+        '''Get range endpoints for a field, given a search'''
+        return Range(param, self.load('meta/range/endpoints/'+param, **kwargs))
