@@ -3,7 +3,9 @@ import pytest
 import responses
 import json as JSON
 
-from opus.metadata import Metadata, Constraints
+from datetime import datetime as dt
+
+from opus.metadata import *
 
 @pytest.fixture
 def json():
@@ -14,8 +16,17 @@ def metadata(json):
     return Metadata(json)
 
 
+def test_read_time():
+    assert read_time('2004-092T22:42:47.095') == dt(2004, 4, 1, 22, 42, 47, 95000)
+    assert read_time('2004-04-01T22:42:47.095') == dt(2004, 4, 1, 22, 42, 47, 95000)
+
+
 def test_metadata_repr(metadata):
     assert repr(metadata) == 'OPUS API Metadata Ring observation: S_IMG_CO_ISS_1459551972_N'
+
+
+def test_constraints_repr():
+    assert repr(Constraints()) == 'Metadata constraints'
 
 
 def test_metadata_general_constraints(metadata):
@@ -27,6 +38,8 @@ def test_metadata_general_constraints(metadata):
     assert metadata.instrument_id == 'COISS'
     assert metadata.time_sec1 == 134174599.095
     assert metadata.time_sec2 == 134174600.095
+    assert metadata.time1 == dt(2004, 4, 1, 22, 42, 47, 95000)
+    assert metadata.time2 == dt(2004, 4, 1, 22, 42, 48, 95000)
     assert metadata.target_class == 'SKY'
     assert metadata.quantity == 'REFLECT'
     assert metadata.type_id == 'IMG'
@@ -38,20 +51,6 @@ def test_metadata_general_constraints(metadata):
     assert metadata.observation_duration == 1.0
     assert metadata.volume_id_list == 'COISS_2001'
     assert metadata.primary_file_spec == 'COISS_2001/data/1459551663_1459568594/N1459551972_1.IMG'
-
-
-# def test_metadata_time(metadata):
-    # assert metadata.time1 == '2004-092T22:42:47.095'
-    # assert metadata.time2 == '2004-092T22:42:48.095'
-
-
-def test_metadata_err(metadata):
-    with pytest.raises(AttributeError):
-        metadata.note
-
-
-def test_constraints_repr():
-    assert repr(Constraints()) == 'Metadata constraints'
 
 
 def test_constraints_saturn_surface_geometry(metadata):
@@ -144,6 +143,16 @@ def test_constraints_cassini_iss(metadata):
     assert constraints.EXPECTED_MAXIMUM_max_DN == 63.450699
     assert constraints.INST_CMPRS_PARAM_MALGO == -2147483648
     
+
+def test_read_time_err():
+    with pytest.raises(ValueError):
+        read_time('abc')
+
+
+def test_metadata_err(metadata):
+    with pytest.raises(AttributeError):
+        metadata.note
+
 
 def test_constraints_err(metadata):
     with pytest.raises(AttributeError):
