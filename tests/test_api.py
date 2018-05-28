@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 import responses
+import six
 
 from opus.api import API
 
@@ -20,11 +21,19 @@ def test_api_url(url):
 
 def test_api_request_params(api):
     url = api.request('data', planet='Saturn', target='pan')
-    assert url == api.url + 'data.json?planet=Saturn&target=pan'
+    if six.PY3:
+        assert url == api.url + 'data.json?planet=Saturn&target=pan'
+    else:
+        assert api.url in url
+        assert 'data.json?' in url
+        assert 'planet=Saturn' in url
+        assert 'target=pan' in url
 
 
 def test_api_request_fmt(api):
     url = api.request('data', fmt='csv')
+    url = api.request('data', fmt='csv')
+    assert url == api.url + 'data.csv'
     assert url == api.url + 'data.csv'
 
 
@@ -52,7 +61,8 @@ def test_api_count(api):
     resp = api.count(planet='Saturn', target='pan')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
     assert responses.calls[0].response.text == result_count
     
     assert resp == 1591
@@ -72,10 +82,11 @@ def test_api_data(api):
     resp = api.data(planet='Saturn', target='pan')
 
     assert len(responses.calls) == 2
-    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-    assert (responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591') \
-        or (responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&limit=1591&target=pan') \
-        or (responses.calls[1].request.url == 'http://localhost/data.json?limit=1591&planet=Saturn&target=pan')  # Python < 3.6 (Not ordered kwargs)
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
+    else:
+        assert 'limit=1591' in responses.calls[1].request.url
     assert responses.calls[1].response.text == data
 
     assert len(resp) == 1591 
@@ -91,9 +102,12 @@ def test_api_data_limit(api):
     resp = api.data(limit=10, page=2, planet='Saturn', target='pan')
 
     assert len(responses.calls) == 1
-    assert (responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=10&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&limit=10&target=pan&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/data.json?limit=10&planet=Saturn&target=pan&page=2')
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=10&page=2'
+    else:
+        assert 'limit=10' in responses.calls[0].request.url
+        assert 'page=2' in responses.calls[0].request.url
+
     assert responses.calls[0].response.text == data
 
     assert len(resp) == 10
@@ -128,10 +142,9 @@ def test_api_images(api):
     resp = api.images(size='med', planet='Saturn', target='pan')
 
     assert len(responses.calls) == 2
-    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-    assert (responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591') \
-        or (responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&limit=1591&target=pan') \
-        or (responses.calls[1].request.url == 'http://localhost/images/med.json?limit=1591&planet=Saturn&target=pan')
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591'
     assert responses.calls[1].response.text == images
 
 @responses.activate
@@ -144,9 +157,8 @@ def test_api_images_limit(api):
     resp = api.images(size='med', limit=10, page=2, planet='Saturn', target='pan')
 
     assert len(responses.calls) == 1
-    assert (responses.calls[0].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=10&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/images/med.json?planet=Saturn&limit=10&target=pan&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/images/med.json?limit=10&planet=Saturn&target=pan&page=2')
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=10&page=2'
     assert responses.calls[0].response.text == images
 
     assert len(resp) == 10
@@ -209,10 +221,9 @@ def test_api_files(api):
     resp = api.files(planet='Saturn', target='pan')
 
     assert len(responses.calls) == 2
-    assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-    assert (responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591') \
-        or (responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&limit=1591&target=pan') \
-        or (responses.calls[1].request.url == 'http://localhost/files.json?limit=1591&planet=Saturn&target=pan')
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591'
     assert responses.calls[1].response.text == files
 
 
@@ -226,9 +237,8 @@ def test_api_files_limit(api):
     resp = api.files(limit=10, page=2, planet='Saturn', target='pan')
 
     assert len(responses.calls) == 1
-    assert (responses.calls[0].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=10&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/files.json?planet=Saturn&limit=10&target=pan&page=2') \
-        or (responses.calls[0].request.url == 'http://localhost/files.json?limit=10&planet=Saturn&target=pan&page=2')
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=10&page=2'
     assert responses.calls[0].response.text == files
 
     assert len(resp) == 10
