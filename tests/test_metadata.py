@@ -3,7 +3,7 @@ import pytest
 import responses
 import json as JSON
 
-from opus.metadata import Metadata
+from opus.metadata import Metadata, Constraints
 
 @pytest.fixture
 def json():
@@ -49,4 +49,102 @@ def test_metadata_err(metadata):
     with pytest.raises(AttributeError):
         metadata.note
 
+
+def test_constraints_repr():
+    assert repr(Constraints()) == 'Metadata constraints'
+
+
+def test_constraints_saturn_surface_geometry(metadata):
+    constraints = metadata.saturn_surface_geometry
+    assert constraints.sub_solar_planetocentric_latitude == -25.081
+    assert constraints.sub_observer_planetocentric_latitude == -16.319
+    assert constraints.sub_solar_planetographic_latitude == -29.908
+    assert constraints.sub_observer_planetographic_latitude == -19.79
+    assert constraints.sub_solar_IAU_longitude == 35.936
+    assert constraints.sub_observer_IAU_longitude == 106.634
+    assert constraints.center_resolution == 268.851
+    assert constraints.center_phase_angle == 66.02
+    assert constraints.center_distance == 45067643.997
+  
+
+def test_constraints_ring_geometry(metadata):
+    constraints = metadata.ring_geometry
+    assert constraints.ring_center_distance == 45067643.997
+    assert constraints.sub_solar_ring_long == 286.798
+    assert constraints.sub_observer_ring_long == 216.1
+    assert constraints.ring_center_phase == 66.02
+    assert constraints.ring_center_incidence == 64.919
+    assert constraints.ring_center_emission == 73.682
+    assert constraints.ring_center_north_based_incidence == 115.081
+    assert constraints.ring_center_north_based_emission == 106.318
+    assert constraints.solar_ring_opening_angle == -25.081
+    assert constraints.observer_ring_opening_angle == -16.319
+
+
+def test_constraints_wavelength(metadata):
+    constraints = metadata.wavelength
+    assert constraints.wavelength1 == 0.451
+    assert constraints.wavelength2 == 0.451
+    assert constraints.spec_flag == 'N'
+    assert constraints.polarization_type == 'NONE'
+  
+
+def test_constraints_image(metadata):
+    constraints = metadata.image
+    assert constraints.duration == 1.0
+    assert constraints.image_type_id == 'FRAM'
+    assert constraints.greater_pixel_size == 1024.0
+    assert constraints.lesser_pixel_size == 1024.0
+    assert constraints.levels == '4096'
+
+def test_constraints_cassini_mission(metadata):
+    constraints = metadata.cassini_mission
+    assert constraints.cassini_target_name == 'instrument calibration'
+    assert constraints.rev_no == 'C44'
+    assert constraints.obs_name == 'ISS_C44IC_CALSTAR2001_PRIME'
+    assert constraints.activity_name == 'CALSTAR2'
+    assert constraints.spacecraft_clock_count1 == 1459551971.131
+    assert constraints.spacecraft_clock_count2 == 1459551972.131
+    assert constraints.prime == 'Y'
+    assert constraints.prime_inst_id == 'COISS'
+    assert constraints.ert_sec1 == 134277636.336
+    assert constraints.ert_sec2 == 134277720.397
+  
+
+def test_constraints_cassini_iss(metadata):
+    constraints = metadata.cassini_iss
+    assert constraints.FILTER_NAME == 'BL1  ,CL2'
+    assert constraints.INST_CMPRS_RATE_expected_average == 2.9
+    assert constraints.INST_CMPRS_RATE_actual_average == 2.135712
+    assert constraints.VALID_MAXIMUM_minimum_full_well_saturation_level == 4095
+    assert constraints.VALID_MAXIMUM_maximum_DN_saturation_level == 4095
+    assert constraints.ANTIBLOOMING_STATE_FLAG == 'ON'
+    assert constraints.CALIBRATION_LAMP_STATE_FLAG == 'N/A'
+    assert constraints.DELAYED_READOUT_FLAG == 'NO'
+    assert constraints.FILTER_TEMPERATURE == -0.468354
+    assert constraints.LIGHT_FLOOD_STATE_FLAG == 'ON'
+    assert constraints.MISSING_PACKET_FLAG == 'NO'
+    assert constraints.camera == 'N'
+    assert constraints.FILTER == 'BL1'
+    assert constraints.IMAGE_OBSERVATION_TYPE == 'CALIBRATION'
+    assert constraints.SHUTTER_MODE_ID == 'NACONLY'
+    assert constraints.DATA_CONVERSION_TYPE == '12BIT'
+    assert constraints.GAIN_MODE_ID == '29 ELECTRONS PER DN'
+    assert constraints.INST_CMPRS_TYPE == 'LOSSLESS'
+    assert constraints.SHUTTER_STATE_ID == 'ENABLED'
+    assert constraints.INST_CMPRS_RATIO == 7.491648
+    assert constraints.TELEMETRY_FORMAT_ID == 'S_N_ER_3'
+    assert constraints.MISSING_LINES == 0
+    assert constraints.OPTICS_TEMPERATURE_front == 0.712693
+    assert constraints.INST_CMPRS_PARAM_QF == -2147483648
+    assert constraints.INST_CMPRS_PARAM_TB == -2147483648
+    assert constraints.INST_CMPRS_PARAM_GOB == -2147483648
+    assert constraints.EXPECTED_MAXIMUM_full_well_DN == 57.5369
+    assert constraints.OPTICS_TEMPERATURE_rear == 1.905708
+    assert constraints.EXPECTED_MAXIMUM_max_DN == 63.450699
+    assert constraints.INST_CMPRS_PARAM_MALGO == -2147483648
     
+
+def test_constraints_err(metadata):
+    with pytest.raises(AttributeError):
+        metadata.ring_geometry_constraints.observer_ring_elevation2
