@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from .wget import download
+
 class Image(object):
     def __init__(self, ring_obs_id, path, img):
         self.ring_obs_id = ring_obs_id
@@ -16,6 +18,8 @@ class Image(object):
     def url(self):
         return self.path + self.img
 
+    def download(self, out=None):
+        download(self.url, out)
 
 class Images(object):
     def __init__(self, json, size):

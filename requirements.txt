@@ -1,4 +1,3 @@
-wget
 requests
 six
 argparse
