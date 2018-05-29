@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+'''
+OPUS API class
+'''
+
 import requests
 
 from .url import clean
@@ -8,7 +12,7 @@ from .images import Images, Image
 from .files import Files, File
 from .mults import Mults
 from .range import Range
-from .fields import Field
+from .fields import Fields, Field
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -48,14 +52,14 @@ class API(object):
             print('Call to: {}'.format(url))
 
         response = requests.get(url)
-        if(response.ok):
+        if response.ok:
             return response.json()
         else:
             raise RuntimeError('The request at {} failed'.format(url))
 
     def count(self, **kwargs):
         '''Get result count for a search'''
-        res = self.load('meta/result_count',  **kwargs)
+        res = self.load('meta/result_count', **kwargs)
         return int(res['data'][0]['result_count'])
 
     def data(self, limit=None, page=1, **kwargs):
@@ -70,12 +74,14 @@ class API(object):
     def metadata(self, ring_obs_id):
         '''Get detail for a single observation'''
         return Metadata(self.load('metadata/'+ring_obs_id))
-        
+
     def images(self, size='med', limit=None, page=1, **kwargs):
         '''Get image results for a search'''
         size = size.lower()
-        if size not in ['thumb','small','med','full']:
-            raise ValueError('Image size {} unknown (available: [thumb,small,med,full])'.format(size))
+        if size not in ['thumb', 'small', 'med', 'full']:
+            raise ValueError(
+                'Image size {} unknown (available: [thumb,small,med,full])'.format(size))
+
         if limit is None:
             kwargs['limit'] = self.count(**kwargs)
         else:
@@ -86,8 +92,10 @@ class API(object):
     def image(self, ring_obs_id, size='med'):
         '''Get images for a single observation'''
         size = size.lower()
-        if size not in ['thumb','small','med','full']:
-            raise ValueError('Image size {} unknown (available: [thumb,small,med,full])'.format(size))
+        if size not in ['thumb', 'small', 'med', 'full']:
+            raise ValueError(
+                'Image size {} unknown (available: [thumb,small,med,full])'.format(size))
+
         json = self.load('image/'+size+'/'+ring_obs_id)
         return Image(ring_obs_id, json['path'], json['data'][0]['img'])
 
@@ -116,4 +124,8 @@ class API(object):
 
     def field(self, field):
         '''Get information about a particular field'''
-        return Field(field, self.load('fields/'+field))
+        return Field(field, self.load('fields/'+field)[field])
+
+    def fields(self):
+        '''Get list of all fields'''
+        return Fields(self.load('fields'))

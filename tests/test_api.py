@@ -291,3 +291,18 @@ def test_api_field(api):
     assert responses.calls[0].response.text == field
 
     assert resp.label == 'Intended Target Name'
+
+@responses.activate
+def test_api_fields(api):
+    fields = open('tests/api/fields.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields.json',
+                  body=fields)
+
+    resp = api.fields()
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/fields.json'
+    assert responses.calls[0].response.text == fields
+
+    assert len(resp) == 3971
