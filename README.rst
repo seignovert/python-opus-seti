@@ -7,7 +7,7 @@ OPUS
         :target: https://travis-ci.org/seignovert/python-opus-seti
 .. |Coverage| image:: https://coveralls.io/repos/github/seignovert/python-opus-seti/badge.svg?branch=master
         :target: https://coveralls.io/github/seignovert/python-opus-seti?branch=master
-.. |PyPI| image:: https://img.shields.io/badge/PyPI-opus-seti-blue.svg
+.. |PyPI| image:: https://img.shields.io/badge/PyPI-opus--seti-blue.svg
         :target: https://pypi.python.org/project/opus-seti
 .. |Status| image:: https://img.shields.io/pypi/status/opus-seti.svg?label=Status
 .. |Version| image:: https://img.shields.io/pypi/v/opus-seti.svg?label=Version
