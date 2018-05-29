@@ -306,3 +306,35 @@ def test_api_fields(api):
     assert responses.calls[0].response.text == fields
 
     assert len(resp) == 3971
+
+
+@responses.activate
+def test_api_category(api):
+    category = open('tests/api/category/obs_general.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/category/obs_general.json',
+                  body=category)
+
+    resp = api.category('obs_general')
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/category/obs_general.json'
+    assert responses.calls[0].response.text == category
+
+    assert resp.name == 'obs_general'
+
+
+@responses.activate
+def test_api_categories(api):
+    categories = open('tests/api/categories.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/categories.json',
+                  body=categories)
+
+    resp = api.categories()
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/categories.json'
+    assert responses.calls[0].response.text == categories
+
+    assert len(resp) == 3

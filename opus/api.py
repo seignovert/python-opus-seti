@@ -13,6 +13,7 @@ from .files import Files, File
 from .mults import Mults
 from .range import Range
 from .fields import Fields, Field
+from .categories import Categories, Category
 
 API_URL = 'https://tools.pds-rings.seti.org/opus/api'
 
@@ -129,3 +130,11 @@ class API(object):
     def fields(self):
         '''Get list of all fields'''
         return Fields(self.load('fields'))
+
+    def category(self, name='obs_general'):
+        '''Get all fields in a category'''
+        return Category(self.load('category/'+name))
+
+    def categories(self):
+        '''List category names'''
+        return Categories(self.load('categories'))
