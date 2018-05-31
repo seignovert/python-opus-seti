@@ -2,10 +2,9 @@
 
 class Data(object):
     def __init__(self, json):
-        self.json = json
-        self.index = 0
+        self._json = json
         self._data = {}
-        for row in self.json['page']:
+        for row in json['page']:
             el = DataElement(self.columns, row)
             self._data[str(el)] = el
 
@@ -33,27 +32,27 @@ class Data(object):
 
     @property
     def count(self):
-        return int(self.json['count'])
+        return int(self._json['count'])
 
     @property
     def limit(self):
-        return int(self.json['limit'])
+        return int(self._json['limit'])
 
     @property
     def order(self):
-        return self.json['order']
+        return self._json['order']
 
     @property
     def page_no(self):
-        return int(self.json['page_no'])
+        return int(self._json['page_no'])
 
     @property
     def labels(self):
-        return self.json['labels']
+        return self._json['labels']
 
     @property
     def columns(self):
-        return self.json['columns']
+        return self._json['columns']
 
 class DataElement(object):
     def __init__(self, columns, row):

@@ -23,39 +23,36 @@ class Image(object):
 
 class Images(object):
     def __init__(self, json, size):
-        self.json = json
+        self._json = json
         self.size = size
-        self.index = 0
+        self._data = {}
+        for img in json['data']:
+            el = Image(img['ring_obs_id'], img['path'], img['img'])
+            self._data[str(el)] = el
 
     def __repr__(self):
-        return 'OPUS API Images object (with {} images)'.format(self.count)
+        return 'OPUS API Images object (with {} {} images):\n'.format(len(self), self.size) + \
+               '\n'.join(' - {}'.format(key) for key, _ in self.items())
 
     def __len__(self):
-        return self.count
+        return len(self._data)
 
-    def __getitem__(self, index):
-        img = self.json['data'][index]
-        return Image(img['ring_obs_id'], img['path'], img['img'])
+    def __getitem__(self, attr):
+        return self._data[attr]
 
     def __iter__(self):
-        return self
+        return iter(self._data)
 
-    def __next__(self):
-        try:
-            result = self.__getitem__(self.index)
-        except IndexError:
-            self.index = 0
-            raise StopIteration
-        self.index += 1
-        return result
+    def keys(self):
+        return self._data.keys()
 
-    def next(self):
-        return self.__next__()
+    def items(self):
+        return self._data.items()
 
-    @property
-    def count(self):
-        return len(self.json['data'])
+    def values(self):
+        return self._data.values()
+
 
     @property
     def order(self):
-        return self.json['order']
+        return self._json['order']
