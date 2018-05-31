@@ -14,11 +14,11 @@ OPUS
 .. |Python| image:: https://img.shields.io/pypi/pyversions/opus-seti.svg?label=Python
 .. |License| image:: https://img.shields.io/pypi/l/opus-seti.svg?label=License
 
-*Python package for OPUS-Seti_ API_ (`NASA-PDS Rings Node`_)*
+Python package for OPUS-Seti_ API_ (`NASA-PDS Rings Node`_)
 
 .. _OPUS-Seti: https://tools.pds-rings.seti.org/opus/
 .. _API: https://tools.pds-rings.seti.org/opus/api/
-.. _NASA-PDS Rings Node: https://pds-rings.seti.org/
+.. _`NASA-PDS Rings Node`: https://pds-rings.seti.org/
 
 Install
 -------
@@ -60,8 +60,10 @@ Usage
     - S_IMG_CO_ISS_1488826725_N
 
 A complete example of the API entry points is available in this
-`Jupyter Notebook<https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/examples.ipynb>`_
+`Jupyter Notebook`_
+
+.. _`Jupyter Notebook`: https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/examples.ipynb
 
 Note
 ----
-**IMPORTANT:** I have no current affiliation with NASA or SETI. The package is provided "as is", use at your own risk.
+**IMPORTANT:** I have no current affiliation with NASA or SETI. The package is provided *as is*, use at your own risk.
