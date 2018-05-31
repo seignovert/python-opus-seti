@@ -4,30 +4,32 @@ class Data(object):
     def __init__(self, json):
         self.json = json
         self.index = 0
+        self._data = {}
+        for row in self.json['page']:
+            el = DataElement(self.columns, row)
+            self._data[str(el)] = el
 
     def __repr__(self):
-        return 'OPUS API Data object (with {} elements)'.format(self.count)
+        return 'OPUS API Data object (with {} elements):\n'.format(len(self)) + \
+               '\n'.join(' - {}'.format(key) for key, _ in self.items())
 
     def __len__(self):
-        return self.count
+        return len(self._data)
 
-    def __getitem__(self, index):
-        return self.json['page'][index]
+    def __getitem__(self, attr):
+        return self._data[attr]
 
     def __iter__(self):
-        return self
+        return iter(self._data)
 
-    def __next__(self):
-        try:
-            result = self.__getitem__(self.index)
-        except IndexError:
-            self.index = 0
-            raise StopIteration
-        self.index += 1
-        return result
+    def keys(self):
+        return self._data.keys()
 
-    def next(self):
-        return self.__next__()
+    def items(self):
+        return self._data.items()
+
+    def values(self):
+        return self._data.values()
 
     @property
     def count(self):
@@ -48,3 +50,47 @@ class Data(object):
     @property
     def labels(self):
         return self.json['labels']
+
+    @property
+    def columns(self):
+        return self.json['columns']
+
+class DataElement(object):
+    def __init__(self, columns, row):
+        self._columns = columns
+        self._row = row
+        self._id = None
+        self._data = {}
+        for column, value in zip(columns, row):
+            if 'Ring Observation ID' in column:
+                self._id = value
+            else:
+                self._data[column] = value
+
+        if self._id is None:
+            raise KeyError('`Ring Observation ID` key is missing in `cols` query')
+
+    def __repr__(self):
+        return 'Ring Observation ID: {}\n'.format(str(self)) + \
+               '\n'.join(' - {}: {}'.format(key, value) for key, value in self.items())
+
+    def __str__(self):
+        return self._id
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, attr):
+        return self._data[attr]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def keys(self):
+        return self._data.keys()
+
+    def items(self):
+        return self._data.items()
+
+    def values(self):
+        return self._data.values()

@@ -3,7 +3,7 @@ import pytest
 
 import json as JSON
 
-from opus.data import Data
+from opus.data import Data, DataElement
 
 @pytest.fixture
 def json():
@@ -13,9 +13,16 @@ def json():
 def data(json):
     return Data(json)
 
+@pytest.fixture
+def el(data):
+    return data['S_IMG_CO_ISS_1508094647_N']
+
 def test_data_meta(data):
-    assert repr(data) == 'OPUS API Data object (with 10 elements)'
+    r = repr(data)
+    assert 'OPUS API Data object (with 10 elements)' in r
+    assert '- S_IMG_CO_ISS_1508094647_N' in r
     assert len(data) == 10
+    assert data.count == 10
     assert data.limit == 10
     assert data.page_no == 2
     assert data.order == 'obs_general.time1'
@@ -32,18 +39,33 @@ def test_data_labels(data):
     assert labels[6] == 'Observation Stop Time (UTC)'
 
 
-def test_data_images(data):
-    img = data[0]
-    assert img[0] == 'S_IMG_CO_ISS_1508094647_N'
-    assert img[1] == 'SAT'
-    assert img[2] == 'PAN'
-    assert img[3] == 87.786
-    assert img[4] == 88.169
-    assert img[5] == '2005-288T18:42:08.622'
-    assert img[6] == '2005-288T18:42:09.302'
-
-
 def test_data_iter(data):
-    data.next() == data[0]
-    for ii, img in enumerate(data):
-        img = data[ii]
+    for key in data:
+        assert key in data.keys()
+        break
+
+    for value in data.values():
+        assert isinstance(value, DataElement)
+        break
+
+
+def test_data_element(el):
+    assert el['Planet'] == 'SAT'
+    assert el['Intended Target Name'] == 'PAN'
+    assert el['Observed Phase Angle (Min)'] == 87.786
+    assert el['Observed Phase Angle (Max)'] == 88.169
+    assert el['Observation Start Time (UTC)'] == '2005-288T18:42:08.622'
+    assert el['Observation Stop Time (UTC)'] == '2005-288T18:42:09.302'
+    assert len(el) == 6
+    assert 'Planet' in repr(el)
+    assert 'SAT' in el.values()
+
+
+def test_data_element_iter(el):
+    for key in el:
+        assert key in el.keys()
+        break
+
+def test_data_element_err():
+    with pytest.raises(KeyError):
+        DataElement(['abc'], ['foo'])
