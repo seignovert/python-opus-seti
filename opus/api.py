@@ -63,7 +63,7 @@ class API(object):
         res = self.load('meta/result_count', **kwargs)
         return int(res['data'][0]['result_count'])
 
-    def data(self, limit=None, page=1, **kwargs):
+    def data(self, limit=100, page=1, **kwargs):
         '''Get data for a search'''
         if limit is None:
             kwargs['limit'] = self.count(**kwargs)
@@ -76,7 +76,7 @@ class API(object):
         '''Get detail for a single observation'''
         return Metadata(self.load('metadata/'+ring_obs_id))
 
-    def images(self, size='med', limit=None, page=1, **kwargs):
+    def images(self, size='med', limit=100, page=1, **kwargs):
         '''Get image results for a search'''
         size = size.lower()
         if size not in ['thumb', 'small', 'med', 'full']:
@@ -105,7 +105,7 @@ class API(object):
         json = self.load('files/'+ring_obs_id)
         return File(ring_obs_id, json['data'][ring_obs_id])
 
-    def files(self, limit=None, page=1, **kwargs):
+    def files(self, limit=100, page=1, **kwargs):
         '''Get all files results for a search'''
         if limit is None:
             kwargs['limit'] = self.count(**kwargs)

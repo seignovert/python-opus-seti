@@ -67,33 +67,9 @@ def test_api_count(api):
     
     assert resp == 1591
 
+
 @responses.activate
 def test_api_data(api):
-    result_count = open('tests/api/meta/result_count.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/meta/result_count.json',
-                  body=result_count)
-
-    data = open('tests/api/data_all.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/data.json',
-                  body=data)
-
-    resp = api.data(planet='Saturn', target='pan')
-
-    assert len(responses.calls) == 2
-    if six.PY3:
-        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
-    else:
-        assert 'limit=1591' in responses.calls[1].request.url
-    assert responses.calls[1].response.text == data
-
-    assert len(resp) == 1591 
-
-
-@responses.activate
-def test_api_data_limit(api):
     data = open('tests/api/data.json', 'r').read()
     responses.add(responses.GET,
                   'http://localhost/data.json',
@@ -112,6 +88,31 @@ def test_api_data_limit(api):
 
     assert len(resp) == 10
 
+
+@responses.activate
+def test_api_data_limit_none(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    data = open('tests/api/data_all.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/data.json',
+                  body=data)
+
+    resp = api.data(planet='Saturn', target='pan', limit=None)
+
+    assert len(responses.calls) == 2
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
+    else:
+        assert 'limit=1591' in responses.calls[1].request.url
+    assert responses.calls[1].response.text == data
+
+    assert len(resp) == 1591
+
 @responses.activate
 def test_api_metadata(api):
     metadata = open('tests/api/metadata/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
@@ -129,26 +130,6 @@ def test_api_metadata(api):
 
 @responses.activate
 def test_api_images(api):
-    result_count = open('tests/api/meta/result_count.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/meta/result_count.json',
-                  body=result_count)
-
-    images = open('tests/api/images/med.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/images/med.json',
-                  body=images)
-
-    resp = api.images(size='med', planet='Saturn', target='pan')
-
-    assert len(responses.calls) == 2
-    if six.PY3:
-        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591'
-    assert responses.calls[1].response.text == images
-
-@responses.activate
-def test_api_images_limit(api):
     images = open('tests/api/images/med.json', 'r').read()
     responses.add(responses.GET,
                   'http://localhost/images/med.json',
@@ -162,6 +143,28 @@ def test_api_images_limit(api):
     assert responses.calls[0].response.text == images
 
     assert len(resp) == 10
+
+
+@responses.activate
+def test_api_images_limit_none(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    images = open('tests/api/images/med.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/images/med.json',
+                  body=images)
+
+    resp = api.images(size='med', planet='Saturn', target='pan', limit=None)
+
+    assert len(responses.calls) == 2
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591'
+    assert responses.calls[1].response.text == images
+
 
 @responses.activate
 def test_api_image(api):
@@ -208,27 +211,6 @@ def test_api_file(api):
 
 @responses.activate
 def test_api_files(api):
-    result_count = open('tests/api/meta/result_count.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/meta/result_count.json',
-                  body=result_count)
-
-    files = open('tests/api/files.json', 'r').read()
-    responses.add(responses.GET,
-                  'http://localhost/files.json',
-                  body=files)
-
-    resp = api.files(planet='Saturn', target='pan')
-
-    assert len(responses.calls) == 2
-    if six.PY3:
-        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591'
-    assert responses.calls[1].response.text == files
-
-
-@responses.activate
-def test_api_files_limit(api):
     files = open('tests/api/files.json', 'r').read()
     responses.add(responses.GET,
                   'http://localhost/files.json',
@@ -242,6 +224,28 @@ def test_api_files_limit(api):
     assert responses.calls[0].response.text == files
 
     assert len(resp) == 10
+
+
+@responses.activate
+def test_api_files_limit_none(api):
+    result_count = open('tests/api/meta/result_count.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/meta/result_count.json',
+                  body=result_count)
+
+    files = open('tests/api/files.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files.json',
+                  body=files)
+
+    resp = api.files(planet='Saturn', target='pan', limit=None)
+
+    assert len(responses.calls) == 2
+    if six.PY3:
+        assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
+        assert responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591'
+    assert responses.calls[1].response.text == files
+
 
 @responses.activate
 def test_api_mults(api):
