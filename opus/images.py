@@ -28,7 +28,7 @@ class Images(DataDict):
             self._data[str(el)] = el
 
     def __repr__(self):
-        return 'OPUS API Images object (with {} {} images):\n'.format(len(self), self.size) + \
+        return 'OPUS API Image objects (with {} {} images):\n'.format(len(self), self.size) + \
                '\n'.join(' - {}'.format(key) for key, _ in self.items())
 
     @property

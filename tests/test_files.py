@@ -61,7 +61,7 @@ def test_file_list_vims(file_vims):
 
 def test_files_meta(files):
     r = repr(files)
-    assert 'OPUS API Files object (with 10 files)' in r
+    assert 'OPUS API File objects (with 10 files)' in r
     assert 'S_CUBE_CO_VIMS_1558621524_VIS' in r
     assert len(files) == 10
 

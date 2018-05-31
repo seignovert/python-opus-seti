@@ -50,7 +50,7 @@ def test_data_dict_iter(data_dict):
 
 def test_data_meta(data):
     r = repr(data)
-    assert 'OPUS API Data object (with 10 elements)' in r
+    assert 'OPUS API Data objects (with 10 elements)' in r
     assert 'S_IMG_CO_ISS_1508094647_N' in r
     assert data.count == 10
     assert data.limit == 10

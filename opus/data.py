@@ -40,7 +40,7 @@ class Data(DataDict):
             self._data[str(el)] = el
 
     def __repr__(self):
-        return 'OPUS API Data object (with {} elements):\n'.format(len(self)) + \
+        return 'OPUS API Data objects (with {} elements):\n'.format(len(self)) + \
                '\n'.join(' - {}'.format(key) for key, _ in self.items())
 
     @property

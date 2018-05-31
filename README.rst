@@ -14,9 +14,11 @@ OPUS
 .. |Python| image:: https://img.shields.io/pypi/pyversions/opus-seti.svg?label=Python
 .. |License| image:: https://img.shields.io/pypi/l/opus-seti.svg?label=License
 
-*Python package for OPUS_ (NASA-PDS/Seti) search tool API*
+*Python package for OPUS-Seti_ API_ (`NASA-PDS Rings Node`_)*
 
-.. _OPUS: https://https://tools.pds-rings.seti.org/opus
+.. _OPUS-Seti: https://tools.pds-rings.seti.org/opus/
+.. _API: https://tools.pds-rings.seti.org/opus/api/
+.. _NASA-PDS Rings Node: https://pds-rings.seti.org/
 
 Install
 -------
@@ -44,7 +46,21 @@ Usage
 
     >>> from opus import api
 
-    >>> api.data(planet='Saturn', target='pan')
+    >>> api.data(planet='Saturn', target='pan', limit=10)
+    OPUS API Data objects (with 10 elements):
+    - S_IMG_CO_ISS_1480614021_N
+    - S_IMG_CO_ISS_1488190255_N
+    - S_IMG_CO_ISS_1488273311_N
+    - S_IMG_CO_ISS_1488368442_N
+    - S_IMG_CO_ISS_1488485562_N
+    - S_IMG_CO_ISS_1488551713_N
+    - S_IMG_CO_ISS_1488711044_N
+    - S_IMG_CO_ISS_1488745124_N
+    - S_IMG_CO_ISS_1488812400_N
+    - S_IMG_CO_ISS_1488826725_N
+
+A complete example of the API entry points is available in this
+`Jupyter Notebook<https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/examples.ipynb>`_
 
 Note
 ----

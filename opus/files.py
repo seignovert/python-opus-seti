@@ -71,5 +71,5 @@ class Files(DataDict):
             self.append(key, File(key, value))
 
     def __repr__(self):
-        return 'OPUS API Files object (with {} files):\n'.format(len(self)) + \
+        return 'OPUS API File objects (with {} files):\n'.format(len(self)) + \
                '\n'.join(' - {}'.format(key) for key in self.keys())

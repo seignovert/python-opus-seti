@@ -33,7 +33,7 @@ def test_image(image):
 
 def test_images_meta(images, size):
     r = repr(images)
-    assert 'OPUS API Images object' in r
+    assert 'OPUS API Image objects' in r
     assert 'S_IMG_CO_ISS_1508094647_N' in r
     assert len(images) == 10
     assert images.order == 'obs_general.time1'
