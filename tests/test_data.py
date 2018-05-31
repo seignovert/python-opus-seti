@@ -3,7 +3,12 @@ import pytest
 
 import json as JSON
 
-from opus.data import Data, DataElement
+from opus.data import DataDict, Data, DataElement
+
+
+@pytest.fixture
+def data_dict():
+    return DataDict()
 
 @pytest.fixture
 def json():
@@ -17,11 +22,35 @@ def data(json):
 def el(data):
     return data['S_IMG_CO_ISS_1508094647_N']
 
+
+def test_data_dict(data_dict):
+    data_dict.append('abc', 'foo')
+    assert repr(data_dict) == '<OPUS API generic class for data objects>'
+    assert len(data_dict) == 1
+    assert data_dict['abc'] == 'foo'
+
+
+def test_data_dict_iter(data_dict):
+    data_dict.append('abc', 'foo')
+
+    for key in data_dict:
+        assert key == 'abc'
+
+    for key in data_dict.keys():
+        assert key == 'abc'
+
+    for key, value in data_dict.items():
+        assert key == 'abc'
+        assert value == 'foo'
+
+    for value in data_dict.values():
+        assert value == 'foo'
+
+
 def test_data_meta(data):
     r = repr(data)
     assert 'OPUS API Data object (with 10 elements)' in r
-    assert '- S_IMG_CO_ISS_1508094647_N' in r
-    assert len(data) == 10
+    assert 'S_IMG_CO_ISS_1508094647_N' in r
     assert data.count == 10
     assert data.limit == 10
     assert data.page_no == 2
@@ -39,17 +68,8 @@ def test_data_labels(data):
     assert labels[6] == 'Observation Stop Time (UTC)'
 
 
-def test_data_iter(data):
-    for key in data:
-        assert key in data.keys()
-        break
-
-    for value in data.values():
-        assert isinstance(value, DataElement)
-        break
-
-
 def test_data_element(el):
+    assert 'Planet' in repr(el)
     assert el['Planet'] == 'SAT'
     assert el['Intended Target Name'] == 'PAN'
     assert el['Observed Phase Angle (Min)'] == 87.786
@@ -57,14 +77,7 @@ def test_data_element(el):
     assert el['Observation Start Time (UTC)'] == '2005-288T18:42:08.622'
     assert el['Observation Stop Time (UTC)'] == '2005-288T18:42:09.302'
     assert len(el) == 6
-    assert 'Planet' in repr(el)
-    assert 'SAT' in el.values()
 
-
-def test_data_element_iter(el):
-    for key in el:
-        assert key in el.keys()
-        break
 
 def test_data_element_err():
     with pytest.raises(KeyError):

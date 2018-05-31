@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 
-class Data(object):
-    def __init__(self, json):
-        self._json = json
+class DataDict(object):
+    def __init__(self):
         self._data = {}
-        for row in json['page']:
-            el = DataElement(self.columns, row)
-            self._data[str(el)] = el
 
     def __repr__(self):
-        return 'OPUS API Data object (with {} elements):\n'.format(len(self)) + \
-               '\n'.join(' - {}'.format(key) for key, _ in self.items())
+        return '<OPUS API generic class for data objects>'
 
     def __len__(self):
         return len(self._data)
@@ -29,6 +24,21 @@ class Data(object):
 
     def values(self):
         return self._data.values()
+
+    def append(self, key, value):
+        self._data[key] = value
+
+class Data(DataDict):
+    def __init__(self, json):
+        DataDict.__init__(self)
+        self._json = json
+        for row in json['page']:
+            el = DataElement(self.columns, row)
+            self._data[str(el)] = el
+
+    def __repr__(self):
+        return 'OPUS API Data object (with {} elements):\n'.format(len(self)) + \
+               '\n'.join(' - {}'.format(key) for key, _ in self.items())
 
     @property
     def count(self):
@@ -54,17 +64,18 @@ class Data(object):
     def columns(self):
         return self._json['columns']
 
-class DataElement(object):
+
+class DataElement(DataDict):
     def __init__(self, columns, row):
+        DataDict.__init__(self)
         self._columns = columns
         self._row = row
         self._id = None
-        self._data = {}
         for column, value in zip(columns, row):
             if 'Ring Observation ID' in column:
                 self._id = value
             else:
-                self._data[column] = value
+                self.append(column, value)
 
         if self._id is None:
             raise KeyError('`Ring Observation ID` key is missing in `cols` query')
@@ -75,21 +86,3 @@ class DataElement(object):
 
     def __str__(self):
         return self._id
-
-    def __len__(self):
-        return len(self._data)
-
-    def __getitem__(self, attr):
-        return self._data[attr]
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def keys(self):
-        return self._data.keys()
-
-    def items(self):
-        return self._data.items()
-
-    def values(self):
-        return self._data.values()
