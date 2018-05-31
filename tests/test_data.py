@@ -24,10 +24,11 @@ def el(data):
 
 
 def test_data_dict(data_dict):
-    data_dict.append('abc', 'foo')
+    data_dict.load({'abc': 'foo', 'def': 'bar'})
     assert repr(data_dict) == '<OPUS API generic class for data objects>'
-    assert len(data_dict) == 1
+    assert len(data_dict) == 2
     assert data_dict['abc'] == 'foo'
+    assert data_dict['def'] == 'bar'
 
 
 def test_data_dict_iter(data_dict):

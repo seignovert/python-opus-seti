@@ -1,43 +1,48 @@
 # -*- coding: utf-8 -*-
 
-class File(object):
+from .data import DataDict
+from .wget import Downloadable
+
+
+class File(DataDict):
     '''Files for a single observation'''
     def __init__(self, ring_obs_id, data):
+        DataDict.__init__(self)
         self.ring_obs_id = ring_obs_id
-        self._data = data
         
-        for label, files in self._data.items():
+        for label, files in data.items():
             if label == 'preview_image':
-                key = 'previews'
+                key = 'PREVIEWS'
                 value = Preview(files)
             else:
-                key = label.lower()
+                key = label.upper()
                 value = FileList(files)
 
-            setattr(self, key, value)
+            self.append(key, value)
 
     def __repr__(self):
-        return 'OPUS API Files for observation: {}'.format(self.ring_obs_id)
+        return 'OPUS API Files for observation: {}\n'.format(self.ring_obs_id) + \
+               '\n'.join('\n=> {}\n{}'.format(key, value) for key, value in self.items())
 
     def __str__(self):
         return self.ring_obs_id
 
-class Preview(object):
+
+class Preview(DataDict):
     '''Previews for a single observation'''
     def __init__(self, previews=[]):
+        DataDict.__init__(self)
         for preview in previews:
-            key = preview.split('_')[-1].replace('.jpg', '').replace('.png','')
-            setattr(self, key, preview)
+            key = preview.split('_')[-1].split('.')[0]
+            self.append(key, Downloadable(preview))
 
     def __repr__(self):
-        return '\n'.join(
-            ['{} -> {}'.format(key.title(), value)
-            for key, value in self.__dict__.items()]
-        )
+        return '\n'.join(' - {}: {}'.format(key, value) for key, value in self.items())
 
-class FileList(object):
+class FileList(DataDict):
     '''Files list for a single observation'''
     def __init__(self, files=[]):
+        DataDict.__init__(self)
         for f in files:
             if f.endswith('.LBL'):
                 key = 'LBL'
@@ -52,47 +57,19 @@ class FileList(object):
             else:
                 raise ValueError('Unknown file format `{}`'.format(f.lower().split('/')[-1]))
 
-            setattr(self, key, f)
+            self.append(key, Downloadable(f))
 
     def __repr__(self):
-        return '\n'.join(
-            ['{} -> {}'.format(key, value)
-            for key, value in self.__dict__.items()]
-        )
+        return '\n'.join(' - {}: {}'.format(key, value) for key, value in self.items())
 
 
-class Files(object):
+class Files(DataDict):
     def __init__(self, json):
-        self.json = json
-        self.imgs = list(self.json['data'].keys())
-        self.index = 0
+        DataDict.__init__(self)
+        self._json = json
+        for key, value in json['data'].items():
+            self.append(key, File(key, value))
 
     def __repr__(self):
-        return 'OPUS API Files object (with {} files)'.format(self.count)
-
-    def __len__(self):
-        return self.count
-
-    def __getitem__(self, index):
-        ring_obs_id = self.imgs[index]
-        data = self.json['data'][ring_obs_id]
-        return File(ring_obs_id, data)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        try:
-            result = self.__getitem__(self.index)
-        except IndexError:
-            self.index = 0
-            raise StopIteration
-        self.index += 1
-        return result
-
-    def next(self):
-        return self.__next__()
-
-    @property
-    def count(self):
-        return len(self.json['data'])
+        return 'OPUS API Files object (with {} files):\n'.format(len(self)) + \
+               '\n'.join(' - {}'.format(key) for key in self.keys())

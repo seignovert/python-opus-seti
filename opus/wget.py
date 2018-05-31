@@ -8,6 +8,12 @@ class Downloadable(object):
     def __init__(self, url):
         self.url = url
 
+    def __repr__(self):
+        return 'OPUS API downloadable file:\n -> {}'.format(str(self))
+
+    def __str__(self):
+        return self.url
+
     def download(self, out=None):
         outdir = None
         if out and os.path.isdir(out):

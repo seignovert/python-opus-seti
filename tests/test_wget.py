@@ -14,8 +14,12 @@ def url():
 def downloadable(url):
     return Downloadable(url)
 
+
+def test_downloadable(downloadable):
+    assert downloadable.url in repr(downloadable)
+
 @responses.activate
-def test_image_download(downloadable):
+def test_download(downloadable):
     fname = 'N1459551972_1_med.jpg'
     with open('tests/api/image/med/'+fname, 'rb') as img:
         responses.add(responses.GET, downloadable.url,
@@ -34,7 +38,7 @@ def test_image_download(downloadable):
 
 
 @responses.activate
-def test_image_download_output(downloadable):
+def test_download_output(downloadable):
     fname = 'N1459551972_1_med.jpg'
     with open('tests/api/image/med/'+fname, 'rb') as img:
         responses.add(responses.GET, downloadable.url,

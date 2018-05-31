@@ -28,6 +28,9 @@ class DataDict(object):
     def append(self, key, value):
         self._data[key] = value
 
+    def load(self, dict):
+        self._data = dict
+
 class Data(DataDict):
     def __init__(self, json):
         DataDict.__init__(self)
