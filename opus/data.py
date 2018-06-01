@@ -31,6 +31,17 @@ class DataDict(object):
     def load(self, dict):
         self._data = dict
 
+    def find(self, keyword):
+        keyword = keyword.lower()
+        keys = []
+        for key in self.keys():
+            if keyword in key.lower():
+                keys.append(key)
+        if len(keys) == 0:
+            return None
+        return keys
+
+
 class Data(DataDict):
     def __init__(self, json):
         DataDict.__init__(self)

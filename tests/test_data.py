@@ -30,6 +30,10 @@ def test_data_dict(data_dict):
     assert data_dict['abc'] == 'foo'
     assert data_dict['def'] == 'bar'
 
+def test_data_dict_find(data_dict):
+    data_dict.load({'abc': 'foo', 'def': 'bar'})
+    assert 'abc' in data_dict.find('AB')
+    assert data_dict.find('ac') is None
 
 def test_data_dict_iter(data_dict):
     data_dict.append('abc', 'foo')

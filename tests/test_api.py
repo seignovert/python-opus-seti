@@ -309,7 +309,7 @@ def test_api_fields(api):
     assert responses.calls[0].request.url == 'http://localhost/fields.json'
     assert responses.calls[0].response.text == fields
 
-    assert len(resp) == 3971
+    assert len(resp) == 304
 
 
 @responses.activate
