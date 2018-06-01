@@ -133,7 +133,7 @@ class API(object):
 
     def category(self, name='obs_general'):
         '''Get all fields in a category'''
-        return Category(self.load('category/'+name))
+        return Category(self.load('categories/'+name))
 
     def categories(self):
         '''List category names'''

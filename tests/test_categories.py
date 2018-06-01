@@ -6,7 +6,7 @@ from opus.categories import Categories, Category
 
 @pytest.fixture
 def category():
-    json = JSON.loads(open('tests/api/category/obs_general.json', 'r').read())
+    json = JSON.loads(open('tests/api/categories/obs_general.json', 'r').read())
     return Category(json)
 
 @pytest.fixture

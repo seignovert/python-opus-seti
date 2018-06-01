@@ -314,15 +314,15 @@ def test_api_fields(api):
 
 @responses.activate
 def test_api_category(api):
-    category = open('tests/api/category/obs_general.json', 'r').read()
+    category = open('tests/api/categories/obs_general.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/category/obs_general.json',
+                  'http://localhost/categories/obs_general.json',
                   body=category)
 
     resp = api.category('obs_general')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/category/obs_general.json'
+    assert responses.calls[0].request.url == 'http://localhost/categories/obs_general.json'
     assert responses.calls[0].response.text == category
 
     assert resp.name == 'obs_general'
