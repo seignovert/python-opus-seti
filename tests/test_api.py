@@ -275,10 +275,10 @@ def test_api_range(api):
     assert responses.calls[0].request.url == 'http://localhost/meta/range/endpoints/ringradius1.json?target=Saturn'
     assert responses.calls[0].response.text == range_endpoints
 
-    assert repr(resp) == 'OPUS API Range endpoints for field: ringradius1'
-    assert resp.min == 60000
-    assert resp.max == 1.29e+07
-    assert resp.nulls == 115573
+    assert 'OPUS API Range endpoints for field: `ringradius1`' in repr(resp)
+    assert resp['min'] == 60000
+    assert resp['max'] == 1.29e+07
+    assert resp['null'] == 115573
 
 
 @responses.activate
