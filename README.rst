@@ -42,6 +42,10 @@ Usage
 
     opus -h # For help
 
+    opus --planet Saturn --target pan
+
+    opus-vims TITAN --limit 5
+
 .. code:: python
 
     >>> from opus import api
