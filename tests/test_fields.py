@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import json as JSON
 import pytest
-import six
+import json as JSON
 
-
-from opus.fields import *
-
+from opus.fields import Fields, Field, splitKey
 
 @pytest.fixture
 def field():

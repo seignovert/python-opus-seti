@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-
 import json as JSON
-
 from datetime import datetime as dt
 
 from opus.metadata import *
