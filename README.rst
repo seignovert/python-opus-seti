@@ -63,10 +63,10 @@ Usage
     - S_IMG_CO_ISS_1488812400_N
     - S_IMG_CO_ISS_1488826725_N
 
-A complete example of the API entry points is available in this
-`Jupyter Notebook`_
+Mor examples are available in this
+`Jupyter Notebook`_.
 
-.. _`Jupyter Notebook`: https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/examples.ipynb
+.. _`Jupyter Notebook`: https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/[examples](https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/jupyter_notbooks/examples.ipynb
 
 Note
 ----
