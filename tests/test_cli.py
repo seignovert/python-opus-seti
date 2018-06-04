@@ -2,9 +2,10 @@
 import pytest
 import responses
 import six
+import os
 
 from opus.api import API
-from opus.cli import read, data, metadata
+from opus.cli import read, data, metadata, image
 
 
 @pytest.fixture
@@ -101,3 +102,49 @@ def test_cli_metadata(api):
     assert responses.calls[0].response.text == json
 
     assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+
+
+@responses.activate
+def test_cli_image(api):
+    img = open('tests/api/image/med/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
+                  body=img)
+
+    argv = ['S_IMG_CO_ISS_1459551972_N', '--size', 'med']
+    resp = image(argv, api=api)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].response.text == img
+
+    assert resp == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
+
+
+@responses.activate
+def test_cli_image_download(api):
+    fname = 'N1459551972_1_med.jpg'
+    jpg = 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
+
+    img = open('tests/api/image/med/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
+                  body=img)
+
+    with open('tests/api/image/med/'+fname, 'rb') as img:
+        responses.add(responses.GET, jpg,
+                      body=img.read(), status=200,
+                      content_type='image/jpeg',
+                      stream=True
+                      )
+
+    argv = ['S_IMG_CO_ISS_1459551972_N', '--output', 'tests/test.jpg']
+    resp = image(argv, api=api)
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[1].request.url == jpg
+
+    assert resp == 'tests/test.jpg'
+    assert os.path.isfile('tests/test.jpg')
+    os.remove('tests/test.jpg')

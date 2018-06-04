@@ -72,3 +72,17 @@ def metadata(argv=None, api=api):
     args, others = parser.parse_known_args(argv)
 
     return api.metadata(args.ring_obs_id)
+
+def image(argv=None, api=api):
+    '''OPUS SETI API images/previews entry point'''
+    parser = argparse.ArgumentParser(description='Get image for a single observation from OPUS-SETI API')
+    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    parser.add_argument('-s', '--size', help='Image size', default='med', choices=['thumb', 'small', 'med', 'full'])
+    parser.add_argument('-d', '--download', help='Download the image', action='store_true')
+    parser.add_argument('-o', '--output', help='Output folder/filename for download', default=None)
+    args, others = parser.parse_known_args(argv)
+
+    img = api.image(args.ring_obs_id, size=args.size)
+    if args.download or args.output is not None:
+        return img.download(out=args.output)
+    return img.url
