@@ -4,7 +4,7 @@ import responses
 import six
 
 from opus.api import API
-from opus.cli import read, data
+from opus.cli import read, data, metadata
 
 
 @pytest.fixture
@@ -84,3 +84,20 @@ def test_data_argv_none(api):
     with pytest.raises(SystemExit):
         resp = data(argv, api=api)
     assert len(responses.calls) == 0
+
+
+@responses.activate
+def test_cli_metadata(api):
+    json = open('tests/api/metadata/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json',
+                   body=json)
+
+    argv = ['S_IMG_CO_ISS_1459551972_N']
+    resp = metadata(argv, api=api)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].response.text == json
+
+    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'

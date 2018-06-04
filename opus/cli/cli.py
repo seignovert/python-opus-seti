@@ -63,3 +63,12 @@ def data(argv=None, desc='Get Data from OPUS-SETI API', args=[], defaults={}, ap
         os.sys.exit(2)
 
     return api.data(**vars(args))
+
+
+def metadata(argv=None, api=api):
+    '''OPUS SETI API metadata entry point'''
+    parser = argparse.ArgumentParser(description='Get detail for a single observation from OPUS-SETI API')
+    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    args, others = parser.parse_known_args(argv)
+
+    return api.metadata(args.ring_obs_id)
