@@ -102,3 +102,20 @@ def files(argv=None, api=api):
         if args.download or args.output is not None:
             return files.download(out=args.output)
     return repr(files)
+
+def field(argv=None, api=api):
+    '''OPUS SETI API field entry point'''
+    parser = argparse.ArgumentParser(description='Get information about field for OPUS-SETI API')
+    parser.add_argument('field', help='Field name', nargs='?', metavar='name')
+    parser.add_argument('--all', help='List all available fields', action='store_true')
+    args, others = parser.parse_known_args(argv)
+
+    if args.all:
+        return api.fields()
+    try:
+        return api.field(args.field)
+    except KeyError:
+        try:
+            return api.fields()[args.field]
+        except KeyError:
+            return 'Unknown field. To list all the available fields, run: `opus-field --all`'

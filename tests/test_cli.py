@@ -5,7 +5,7 @@ import six
 import os
 
 from opus.api import API
-from opus.cli import read, data, metadata, image, files
+import opus.cli as cli
 
 
 @pytest.fixture
@@ -13,24 +13,24 @@ def api():
     return API('http://localhost/')
 
 def test_read():
-    assert read('foo'.split()) == {}
-    assert read('--foo'.split()) == {}
+    assert cli.read('foo'.split()) == {}
+    assert cli.read('--foo'.split()) == {}
     
-    assert read('--foo bar'.split()) == {'foo': 'bar'}
-    assert read('--foo=bar'.split()) == {'foo': 'bar'}
-    assert read('--foo --bar'.split()) == {}
+    assert cli.read('--foo bar'.split()) == {'foo': 'bar'}
+    assert cli.read('--foo=bar'.split()) == {'foo': 'bar'}
+    assert cli.read('--foo --bar'.split()) == {}
 
-    assert read('--foo=bar 123'.split()) == {'foo': 'bar'}
-    assert read('--foo=123 --bar abc'.split()) == {'foo': '123', 'bar': 'abc'}
+    assert cli.read('--foo=bar 123'.split()) == {'foo': 'bar'}
+    assert cli.read('--foo=123 --bar abc'.split()) == {'foo': '123', 'bar': 'abc'}
     
-    assert read('--foo 123 abc'.split()) == {'foo': '123'}
-    assert read('--foo 123 --bar'.split()) == {'foo': '123'}
-    assert read('--foo --bar 123'.split()) == {'bar': '123'}
-    assert read('123 --foo --bar'.split()) == {}
+    assert cli.read('--foo 123 abc'.split()) == {'foo': '123'}
+    assert cli.read('--foo 123 --bar'.split()) == {'foo': '123'}
+    assert cli.read('--foo --bar 123'.split()) == {'bar': '123'}
+    assert cli.read('123 --foo --bar'.split()) == {}
 
-    assert read("--foo='bar'".split()) == {'foo': 'bar'}
-    assert read(["--foo='123 abc'"]) == {'foo': '123 abc'}
-    assert read(["--foo", "'123 abc'"]) == {'foo': '123 abc'}
+    assert cli.read("--foo='bar'".split()) == {'foo': 'bar'}
+    assert cli.read(["--foo='123 abc'"]) == {'foo': '123 abc'}
+    assert cli.read(["--foo", "'123 abc'"]) == {'foo': '123 abc'}
 
 @responses.activate
 def test_cli_data(api):
@@ -40,7 +40,7 @@ def test_cli_data(api):
                   body=json)
 
     argv = '--limit 100'.split()
-    resp = data(argv, api=api)
+    resp = cli.data(argv, api=api)
 
     assert len(responses.calls) == 1
     if six.PY3:
@@ -65,7 +65,7 @@ def test_cli_data_limite_none(api):
                   body=json)
 
     argv = '--all --planet Saturn'.split()
-    resp = data(argv, api=api)
+    resp = cli.data(argv, api=api)
 
     assert len(responses.calls) == 2
     if six.PY3:
@@ -83,7 +83,7 @@ def test_data_argv_none(api):
     responses.add(responses.GET, 'http://localhost/data.json',body='{}')
     argv = ['']
     with pytest.raises(SystemExit):
-        resp = data(argv, api=api)
+        resp = cli.data(argv, api=api)
     assert len(responses.calls) == 0
 
 
@@ -95,7 +95,7 @@ def test_cli_metadata(api):
                    body=json)
 
     argv = 'S_IMG_CO_ISS_1459551972_N'.split()
-    resp = metadata(argv, api=api)
+    resp = cli.metadata(argv, api=api)
 
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == 'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json'
@@ -112,7 +112,7 @@ def test_cli_image(api):
                   body=img)
 
     argv = 'S_IMG_CO_ISS_1459551972_N --size med'.split()
-    resp = image(argv, api=api)
+    resp = cli.image(argv, api=api)
 
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
@@ -139,7 +139,7 @@ def test_cli_image_download(api):
                       )
 
     argv = 'S_IMG_CO_ISS_1459551972_N --output tests/test.jpg'.split()
-    resp = image(argv, api=api)
+    resp = cli.image(argv, api=api)
 
     assert len(responses.calls) == 2
     assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
@@ -158,7 +158,7 @@ def test_cli_files(api):
                   body=json)
 
     argv = 'S_IMG_CO_ISS_1459551972_N'.split()
-    resp = files(argv, api=api)
+    resp = cli.files(argv, api=api)
 
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
@@ -186,7 +186,7 @@ def test_cli_files_downlad(api):
                       )
 
     argv = 'S_IMG_CO_ISS_1459551972_N -f RAW_IMAGE LBL --output tests/test.lbl'.split()
-    resp = files(argv, api=api)
+    resp = cli.files(argv, api=api)
 
     assert len(responses.calls) == 2
     assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
@@ -195,3 +195,84 @@ def test_cli_files_downlad(api):
     assert resp == 'tests/test.lbl'
     assert os.path.isfile('tests/test.lbl')
     os.remove('tests/test.lbl')
+
+
+@responses.activate
+def test_cli_field(api):
+    json = open('tests/api/fields/target.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields/target.json',
+                  body=json)
+
+    argv = 'target'.split()
+    resp = cli.field(argv, api=api)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/fields/target.json'
+    assert responses.calls[0].response.text == json
+
+    assert resp.label == 'Intended Target Name'
+
+
+@responses.activate
+def test_cli_field_all(api):
+    json = open('tests/api/fields.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields.json',
+                  body=json)
+
+    argv = '--all'.split()
+    resp = cli.field(argv, api=api)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/fields.json'
+    assert responses.calls[0].response.text == json
+
+    r = repr(resp)
+    assert 'OPUS API list of all fields available (304):' in r
+    assert 'GLOBAL' in r
+    assert 'TITAN' in r
+
+@responses.activate
+def test_cli_field_group(api):
+    json = open('tests/api/fields.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields/TITAN.json',
+                  body='{}')
+    responses.add(responses.GET,
+                  'http://localhost/fields.json',
+                  body=json)
+
+    argv = 'TITAN'.split()
+    resp = cli.field(argv, api=api)
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/fields/TITAN.json'
+    assert responses.calls[0].response.text == '{}'
+    assert responses.calls[1].request.url == 'http://localhost/fields.json'
+    assert responses.calls[1].response.text == json
+
+    r = repr(resp)
+    assert 'OPUS API Surface Geometry fields (31) for `Titan`:' in r
+    assert 'Sub-Solar IAU West Longitude (subsolarIAUlongitude)' in r
+
+@responses.activate
+def test_cli_field_err(api):
+    json = open('tests/api/fields.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/fields/abc.json',
+                  body='{}')
+    responses.add(responses.GET,
+                  'http://localhost/fields.json',
+                  body=json)
+
+    argv = 'abc'.split()
+    resp = cli.field(argv, api=api)
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/fields/abc.json'
+    assert responses.calls[0].response.text == '{}'
+    assert responses.calls[1].request.url == 'http://localhost/fields.json'
+    assert responses.calls[1].response.text == json
+
+    assert resp == 'Unknown field. To list all the available fields, run: `opus-field --all`'
