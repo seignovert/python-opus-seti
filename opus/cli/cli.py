@@ -86,3 +86,19 @@ def image(argv=None, api=api):
     if args.download or args.output is not None:
         return img.download(out=args.output)
     return img.url
+
+def files(argv=None, api=api):
+    '''OPUS SETI API files entry point'''
+    parser = argparse.ArgumentParser(description='Get files for a single observation from OPUS-SETI API')
+    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    parser.add_argument('-f', '--fmt', help='File format', default=None, nargs=2, metavar=('GROUP','FORMAT'))
+    parser.add_argument('-d', '--download', help='Download the image', action='store_true')
+    parser.add_argument('-o', '--output', help='Output folder/filename for download', default=None)
+    args, others = parser.parse_known_args(argv)
+
+    files = api.file(args.ring_obs_id)
+    if args.fmt is not None:
+        files = files[args.fmt[0]][args.fmt[1]]
+        if args.download or args.output is not None:
+            return files.download(out=args.output)
+    return repr(files)

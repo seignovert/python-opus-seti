@@ -5,7 +5,7 @@ import six
 import os
 
 from opus.api import API
-from opus.cli import read, data, metadata, image
+from opus.cli import read, data, metadata, image, files
 
 
 @pytest.fixture
@@ -13,22 +13,22 @@ def api():
     return API('http://localhost/')
 
 def test_read():
-    assert read(['foo']) == {}
-    assert read(['--foo']) == {}
+    assert read('foo'.split()) == {}
+    assert read('--foo'.split()) == {}
     
-    assert read(['--foo', 'bar']) == {'foo': 'bar'}
-    assert read(['--foo=bar']) == {'foo': 'bar'}
-    assert read(['--foo', '--bar']) == {}
+    assert read('--foo bar'.split()) == {'foo': 'bar'}
+    assert read('--foo=bar'.split()) == {'foo': 'bar'}
+    assert read('--foo --bar'.split()) == {}
 
-    assert read(['--foo=bar', '123']) == {'foo': 'bar'}
-    assert read(['--foo=123', '--bar', 'abc']) == {'foo': '123', 'bar': 'abc'}
+    assert read('--foo=bar 123'.split()) == {'foo': 'bar'}
+    assert read('--foo=123 --bar abc'.split()) == {'foo': '123', 'bar': 'abc'}
     
-    assert read(['--foo', '123', 'abc']) == {'foo': '123'}
-    assert read(['--foo', '123', '--bar']) == {'foo': '123'}
-    assert read(['--foo', '--bar', '123']) == {'bar': '123'}
-    assert read(['123','--foo', '--bar']) == {}
+    assert read('--foo 123 abc'.split()) == {'foo': '123'}
+    assert read('--foo 123 --bar'.split()) == {'foo': '123'}
+    assert read('--foo --bar 123'.split()) == {'bar': '123'}
+    assert read('123 --foo --bar'.split()) == {}
 
-    assert read(["--foo='bar'"]) == {'foo': 'bar'}
+    assert read("--foo='bar'".split()) == {'foo': 'bar'}
     assert read(["--foo='123 abc'"]) == {'foo': '123 abc'}
     assert read(["--foo", "'123 abc'"]) == {'foo': '123 abc'}
 
@@ -39,7 +39,7 @@ def test_cli_data(api):
                   'http://localhost/data.json',
                   body=json)
 
-    argv = ['--limit', '100']
+    argv = '--limit 100'.split()
     resp = data(argv, api=api)
 
     assert len(responses.calls) == 1
@@ -64,7 +64,7 @@ def test_cli_data_limite_none(api):
                   'http://localhost/data.json',
                   body=json)
 
-    argv = ['--all', '--planet', 'Saturn']
+    argv = '--all --planet Saturn'.split()
     resp = data(argv, api=api)
 
     assert len(responses.calls) == 2
@@ -94,7 +94,7 @@ def test_cli_metadata(api):
                   'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json',
                    body=json)
 
-    argv = ['S_IMG_CO_ISS_1459551972_N']
+    argv = 'S_IMG_CO_ISS_1459551972_N'.split()
     resp = metadata(argv, api=api)
 
     assert len(responses.calls) == 1
@@ -111,7 +111,7 @@ def test_cli_image(api):
                   'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
                   body=img)
 
-    argv = ['S_IMG_CO_ISS_1459551972_N', '--size', 'med']
+    argv = 'S_IMG_CO_ISS_1459551972_N --size med'.split()
     resp = image(argv, api=api)
 
     assert len(responses.calls) == 1
@@ -123,13 +123,13 @@ def test_cli_image(api):
 
 @responses.activate
 def test_cli_image_download(api):
-    fname = 'N1459551972_1_med.jpg'
-    jpg = 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
-
     img = open('tests/api/image/med/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
     responses.add(responses.GET,
                   'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
                   body=img)
+
+    fname = 'N1459551972_1_med.jpg'
+    jpg = 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
 
     with open('tests/api/image/med/'+fname, 'rb') as img:
         responses.add(responses.GET, jpg,
@@ -138,7 +138,7 @@ def test_cli_image_download(api):
                       stream=True
                       )
 
-    argv = ['S_IMG_CO_ISS_1459551972_N', '--output', 'tests/test.jpg']
+    argv = 'S_IMG_CO_ISS_1459551972_N --output tests/test.jpg'.split()
     resp = image(argv, api=api)
 
     assert len(responses.calls) == 2
@@ -148,3 +148,50 @@ def test_cli_image_download(api):
     assert resp == 'tests/test.jpg'
     assert os.path.isfile('tests/test.jpg')
     os.remove('tests/test.jpg')
+
+
+@responses.activate
+def test_cli_files(api):
+    json = open('tests/api/files/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json',
+                  body=json)
+
+    argv = 'S_IMG_CO_ISS_1459551972_N'.split()
+    resp = files(argv, api=api)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].response.text == json
+
+    assert 'OPUS API Files for observation: S_IMG_CO_ISS_1459551972_N' in resp
+    assert 'LBL: https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.LBL' in resp
+
+
+@responses.activate
+def test_cli_files_downlad(api):
+    json = open('tests/api/files/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    responses.add(responses.GET,
+                  'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json',
+                  body=json)
+
+    fname = 'N1459551972_1.LBL'
+    lbl = 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1.LBL'
+
+    with open('tests/data/'+fname, 'rb') as img:
+        responses.add(responses.GET, lbl,
+                      body=img.read(), status=200,
+                      content_type='image/txt',
+                      stream=True
+                      )
+
+    argv = 'S_IMG_CO_ISS_1459551972_N -f RAW_IMAGE LBL --output tests/test.lbl'.split()
+    resp = files(argv, api=api)
+
+    assert len(responses.calls) == 2
+    assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[1].request.url == lbl
+
+    assert resp == 'tests/test.lbl'
+    assert os.path.isfile('tests/test.lbl')
+    os.remove('tests/test.lbl')
