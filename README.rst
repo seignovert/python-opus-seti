@@ -44,7 +44,7 @@ Usage
 
     opus --planet Saturn --target pan
 
-    opus-vims TITAN --limit 5
+    cassini-vims TITAN --limit 5
 
 .. code:: python
 
