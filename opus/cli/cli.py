@@ -2,7 +2,7 @@
 import os
 import argparse
 
-from .api import API
+from ..api import API
 
 api = API()
 
@@ -63,12 +63,3 @@ def data(argv=None, desc='Get Data from OPUS-SETI API', args=[], defaults={}, ap
         os.sys.exit(2)
 
     return api.data(**vars(args))
-
-
-def vims(argv=None, api=api):
-    '''Cassini VIMS data entry point'''
-    return data(argv, desc='Get Cassini VIMS Images and Cubes from OPUS API',
-                args=[{'surfacegeometrytargetname': {'help': 'VIMS target name', 'metavar': 'TARGET_NAME'}},
-                    {'--cols': {'default': 'ringobsid,target,revno,time1,primaryfilespec,channel',
-                    'help': 'Output columns (default: `ringobsid,target,revno,time1,primaryfilespec,channel`)'}}],
-                defaults={'instrumentid': 'Cassini+VIMS', 'typeid': 'Image,Cube'}, api=api)
