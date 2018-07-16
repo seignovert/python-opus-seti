@@ -86,7 +86,7 @@ class DataElement(DataDict):
         self._row = row
         self._id = None
         for column, value in zip(columns, row):
-            if 'Ring Observation ID' in column:
+            if 'Ring Observation ID' in str(column):
                 self._id = value
             else:
                 self.append(column, value)
