@@ -10,12 +10,15 @@ def read_time(time):
     if time == 'No':
         return None
     try:
-        return dt.strptime(time, '%Y-%m-%dT%H:%M:%S.%f')
+        return dt.strptime(time, '%Y-%m-%dT%H:%M:%S')
     except ValueError:
         try:
-            return dt.strptime(time, '%Y-%jT%H:%M:%S.%f')
+            return dt.strptime(time, '%Y-%m-%dT%H:%M:%S.%f')
         except ValueError:
-            raise ValueError('Time `{}` does not match either `%Y-%m-%dT%H:%M:%S.%f` nor `%Y-%jT%H:%M:%S.%f`'.format(time))
+            try:
+                return dt.strptime(time, '%Y-%jT%H:%M:%S.%f')
+            except ValueError:
+                raise ValueError('Time `{}` does not match either `%Y-%m-%dT%H:%M:%S.%f` nor `%Y-%jT%H:%M:%S.%f`'.format(time))
 
 
 class Metadata(DataDict):

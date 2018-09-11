@@ -10,5 +10,5 @@ def vims(argv=None, api=api):
     return data(argv, desc='Get Cassini VIMS Images and Cubes from OPUS API',
                 args=[{'target': {'help': 'VIMS target name', 'metavar': 'TARGET_NAME'}},
                       {'--cols': {'default': 'opusid,target,revno,time1,primaryfilespec',
-                                  'help': 'Output columns (default: `ringobsid,target,revno,time1,primaryfilespec,channel`)'}}],
+                                  'help': 'Output columns (default: `opusid,target,revno,time1,primaryfilespec`)'}}],
                 defaults={'instrumentid': 'Cassini+VIMS', 'COVIMSswathlength1': 2, 'COVIMSswathwidth1': 2}, api=api)
