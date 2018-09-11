@@ -2,10 +2,6 @@ sudo: false
 language: python
 cache: pip
 
-python:
-- '2.7'
-- '3.6'
-
 stages:
   - name: test
   - name: deploy
@@ -14,6 +10,9 @@ stages:
 jobs:
   include:
     - stage: test
+      python:
+      - '2.7'
+      - '3.6'
       install:
           - pip install tox-travis python-coveralls
       script:
