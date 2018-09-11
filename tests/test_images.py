@@ -17,25 +17,25 @@ def images(size):
 
 @pytest.fixture
 def image(size):
-    ring_obs_id = 'S_IMG_CO_ISS_1459551972_N'
-    json = JSON.loads(open('tests/api/image/'+size+'/'+ring_obs_id+'.json', 'r').read())
-    return Image(ring_obs_id, json['path'], json['data'][0]['img'])
+    opus_id = 'COISS_2001-1459551663_1459568594-N1459551972_1'
+    json = JSON.loads(open('tests/api/image/'+size+'/'+opus_id+'.json', 'r').read())
+    return Image(opus_id, json['path'], json['data'][0]['img'])
 
 
 def test_image(image):
-    assert repr(image) == 'OPUS API Image object: S_IMG_CO_ISS_1459551972_N'
-    assert str(image) == 'S_IMG_CO_ISS_1459551972_N'
-    assert image.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
-    assert image.path == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/'
-    assert image.img == 'COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
+    assert repr(image) == 'OPUS API Image object: COISS_2001-1459551663_1459568594-N1459551972_1'
+    assert str(image) == 'COISS_2001-1459551663_1459568594-N1459551972_1'
+    assert image.opus_id == 'COISS_2001-1459551663_1459568594-N1459551972_1'
+    assert image.path == 'https://pds-rings.seti.org/holdings/previews/'
+    assert image.img == 'COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
     assert image.url == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
 
 
 def test_images_meta(images, size):
     r = repr(images)
     assert 'OPUS API Image objects' in r
-    assert 'S_IMG_CO_ISS_1508094647_N' in r
+    assert 'COISS_2016-1508054834_1508117267-N1508094647_1' in r
     assert len(images) == 10
-    assert images.order == 'obs_general.time1'
+    assert images.order == 'time1,opusid'
     assert images.size == size
 

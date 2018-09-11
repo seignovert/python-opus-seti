@@ -19,7 +19,7 @@ def data(json):
 
 @pytest.fixture
 def el(data):
-    return data['S_IMG_CO_ISS_1508094647_N']
+    return data['COISS_2016-1508054834_1508117267-N1508094647_1']
 
 
 def test_data_dict(data_dict):
@@ -54,33 +54,31 @@ def test_data_dict_iter(data_dict):
 def test_data_meta(data):
     r = repr(data)
     assert 'OPUS API Data objects (with 10 elements)' in r
-    assert 'S_IMG_CO_ISS_1508094647_N' in r
+    assert 'COISS_2016-1509692161_1509948012-N1509868439_1' in r
     assert data.count == 10
     assert data.limit == 10
     assert data.page_no == 2
-    assert data.order == 'obs_general.time1'
+    assert data.order == 'time1,opusid'
 
 
 def test_data_labels(data):
     labels = data.labels
-    assert labels[0] == 'Ring Observation ID'
-    assert labels[1] == 'Planet'
-    assert labels[2] == 'Intended Target Name'
-    assert labels[3] == 'Observed Phase Angle (Min)'
-    assert labels[4] == 'Observed Phase Angle (Max)'
-    assert labels[5] == 'Observation Start Time (UTC)'
-    assert labels[6] == 'Observation Stop Time (UTC)'
+    assert labels[0] == 'OPUS ID'
+    assert labels[1] == 'Instrument Name'
+    assert labels[2] == 'Planet'
+    assert labels[3] == 'Intended Target Name'
+    assert labels[4] == 'Observation Start Time (UTC)'
+    assert labels[5] == 'Observation Duration'
 
 
 def test_data_element(el):
     assert 'Planet' in repr(el)
-    assert el['Planet'] == 'SAT'
-    assert el['Intended Target Name'] == 'PAN'
-    assert el['Observed Phase Angle (Min)'] == 87.786
-    assert el['Observed Phase Angle (Max)'] == 88.169
-    assert el['Observation Start Time (UTC)'] == '2005-288T18:42:08.622'
-    assert el['Observation Stop Time (UTC)'] == '2005-288T18:42:09.302'
-    assert len(el) == 6
+    assert el['Instrument Name'] == "Cassini ISS"
+    assert el['Planet'] == "Saturn"
+    assert el['Intended Target Name'] == "Pan"
+    assert el['Observation Start Time (UTC)'] == "2005-10-15T18:42:08.622"
+    assert el['Observation Duration'] == 0.68
+    assert len(el) == 5
 
 
 def test_data_element_err():

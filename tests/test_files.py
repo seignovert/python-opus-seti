@@ -13,56 +13,49 @@ def files():
 
 @pytest.fixture
 def file_iss(files):
-    json = JSON.loads(open('tests/api/files/S_IMG_CO_ISS_1459551972_N.json', 'r').read())
-    return File('S_IMG_CO_ISS_1459551972_N', json['data']['S_IMG_CO_ISS_1459551972_N'])
+    json = JSON.loads(open('tests/api/files/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read())
+    return File('COISS_2001-1459551663_1459568594-N1459551972_1', json['data']['COISS_2001-1459551663_1459568594-N1459551972_1'])
 
 @pytest.fixture
 def file_vims(files):
-    json = JSON.loads(open('tests/api/files/S_CUBE_CO_VIMS_1558621524_VIS.json', 'r').read())
-    return File('S_CUBE_CO_VIMS_1558621524_VIS', json['data']['S_CUBE_CO_VIMS_1558621524_VIS'])
+    json = JSON.loads(open('tests/api/files/COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS.json', 'r').read())
+    return File('COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS', json['data']['COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS'])
 
 
 def test_file_meta(file_vims):
-    assert 'OPUS API Files for observation: S_CUBE_CO_VIMS_1558621524_VIS' in repr(file_vims)
-    assert str(file_vims) == 'S_CUBE_CO_VIMS_1558621524_VIS'
-    assert file_vims.ring_obs_id == 'S_CUBE_CO_VIMS_1558621524_VIS'
+    assert 'OPUS API Files for observation: COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS' in repr(file_vims)
+    assert str(file_vims) == 'COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS'
+    assert file_vims.opus_id == 'COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS'
 
 def test_file_previews(file_iss):
-    previews = file_iss['PREVIEWS']
+    previews = file_iss['FULL-SIZE']
     assert str(previews['full']) == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_full.jpg'
-    assert str(previews['med']) == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_med.jpg'
-    assert str(previews['small']) == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_small.jpg'
-    assert str(previews['thumb']) == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_thumb.jpg'
-
 
 def test_file_list_iss(file_iss):
-    raw_image = file_iss['RAW_IMAGE']
+    raw_image = file_iss['RAW_DATA']
     assert str(raw_image['LBL']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1.LBL'
     assert str(raw_image['IMG']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1.IMG'
-    assert str(raw_image['tlmtab']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/LABEL/TLMTAB.FMT'
-    assert str(raw_image['prefix2']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/LABEL/PREFIX2.FMT'
+    assert str(raw_image['prefix2']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/label/prefix2.fmt'
+    assert str(raw_image['tlmtab']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/label/tlmtab.fmt'
 
-    calibrated = file_iss['CALIBRATED']
-    assert str(calibrated['LBL']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.LBL'
+    calibrated = file_iss['CALIBRATED_DATA']
     assert str(calibrated['IMG']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.IMG'
-    assert str(calibrated['tlmtab']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/LABEL/TLMTAB.FMT'
-    assert str(calibrated['prefix2']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/LABEL/PREFIX2.FMT'
+    assert str(calibrated['LBL']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.LBL'
 
 
 def test_file_list_vims(file_vims):
-    raw_spectral_image_cube = file_vims['RAW_SPECTRAL_IMAGE_CUBE']
+    raw_spectral_image_cube = file_vims['RAW_DATA']
     assert str(raw_spectral_image_cube['qub']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/data/2007137T054828_2007143T180509/v1558621524_1.qub'
-    assert str(raw_spectral_image_cube['QUB']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/data/2007137T054828_2007143T180509/v1558621524_1.QUB'
-    assert str(raw_spectral_image_cube['LBL']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/data/2007137T054828_2007143T180509/v1558621524_1.LBL'
-    assert str(raw_spectral_image_cube['suffix_description']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/LABEL/suffix_description.fmt'
-    assert str(raw_spectral_image_cube['core_description']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/LABEL/core_description.fmt'
-    assert str(raw_spectral_image_cube['band_bin_center']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/LABEL/band_bin_center.fmt'
+    assert str(raw_spectral_image_cube['LBL']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/data/2007137T054828_2007143T180509/v1558621524_1.lbl'
+    assert str(raw_spectral_image_cube['band_bin_center']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/label/band_bin_center.fmt'
+    assert str(raw_spectral_image_cube['core_description']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/label/core_description.fmt'
+    assert str(raw_spectral_image_cube['suffix_description']) == 'https://pds-rings.seti.org/holdings/volumes/COVIMS_0xxx/COVIMS_0020/label/suffix_description.fmt'
     
 
 def test_files_meta(files):
     r = repr(files)
     assert 'OPUS API File objects (with 10 files)' in r
-    assert 'S_CUBE_CO_VIMS_1558621524_VIS' in r
+    assert 'COISS_2016-1508054834_1508117267-N1508094647_1' in r
     assert len(files) == 10
 
 

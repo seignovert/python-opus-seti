@@ -14,5 +14,5 @@ def mults():
 def test_mults(mults):
     r = repr(mults)
     assert 'OPUS API Multiple choice for field: `target`' in r
-    assert 'TITAN' in r
-    assert len(mults) == 63
+    assert 'Titan' in r
+    assert len(mults) == 67

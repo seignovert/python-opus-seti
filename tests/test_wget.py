@@ -21,7 +21,7 @@ def test_downloadable(downloadable):
 @responses.activate
 def test_download(downloadable):
     fname = 'N1459551972_1_med.jpg'
-    with open('tests/api/image/med/'+fname, 'rb') as img:
+    with open('tests/data/'+fname, 'rb') as img:
         responses.add(responses.GET, downloadable.url,
                       body=img.read(), status=200,
                       content_type='image/jpeg',
@@ -40,7 +40,7 @@ def test_download(downloadable):
 @responses.activate
 def test_download_output(downloadable):
     fname = 'N1459551972_1_med.jpg'
-    with open('tests/api/image/med/'+fname, 'rb') as img:
+    with open('tests/data/'+fname, 'rb') as img:
         responses.add(responses.GET, downloadable.url,
                       body=img.read(), status=200,
                       content_type='image/jpeg',

@@ -65,7 +65,7 @@ def test_api_count(api):
         assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
     assert responses.calls[0].response.text == result_count
     
-    assert resp == 1591
+    assert resp == 1636
 
 
 @responses.activate
@@ -106,27 +106,27 @@ def test_api_data_limit_none(api):
     assert len(responses.calls) == 2
     if six.PY3:
         assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1591'
+        assert responses.calls[1].request.url == 'http://localhost/data.json?planet=Saturn&target=pan&limit=1636'
     else:
-        assert 'limit=1591' in responses.calls[1].request.url
+        assert 'limit=1636' in responses.calls[1].request.url
     assert responses.calls[1].response.text == data
 
-    assert len(resp) == 1591
+    assert len(resp) == 1636
 
 @responses.activate
 def test_api_metadata(api):
-    metadata = open('tests/api/metadata/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    metadata = open('tests/api/metadata_v2/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json',
+                  'http://localhost/metadata_v2/COISS_2001-1459551663_1459568594-N1459551972_1.json',
                    body=metadata)
 
-    resp = api.metadata('S_IMG_CO_ISS_1459551972_N')
+    resp = api.metadata('COISS_2001-1459551663_1459568594-N1459551972_1')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/metadata/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].request.url == 'http://localhost/metadata_v2/COISS_2001-1459551663_1459568594-N1459551972_1.json'
     assert responses.calls[0].response.text == metadata
 
-    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+    assert resp.opus_id == 'COISS_2001-1459551663_1459568594-N1459551972_1'
 
 @responses.activate
 def test_api_images(api):
@@ -162,24 +162,24 @@ def test_api_images_limit_none(api):
     assert len(responses.calls) == 2
     if six.PY3:
         assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1591'
+        assert responses.calls[1].request.url == 'http://localhost/images/med.json?planet=Saturn&target=pan&limit=1636'
     assert responses.calls[1].response.text == images
 
 
 @responses.activate
 def test_api_image(api):
-    image = open('tests/api/image/med/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+    image = open('tests/api/image/med/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json',
+                  'http://localhost/image/med/COISS_2001-1459551663_1459568594-N1459551972_1.json',
                    body=image)
 
-    resp = api.image('S_IMG_CO_ISS_1459551972_N')
+    resp = api.image('COISS_2001-1459551663_1459568594-N1459551972_1')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/image/med/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].request.url == 'http://localhost/image/med/COISS_2001-1459551663_1459568594-N1459551972_1.json'
     assert responses.calls[0].response.text == image
 
-    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+    assert resp.opus_id == 'COISS_2001-1459551663_1459568594-N1459551972_1'
 
 
 def test_api_images_size_err(api):
@@ -189,24 +189,24 @@ def test_api_images_size_err(api):
 
 def test_api_image_size_err(api):
     with pytest.raises(ValueError):
-        api.image('S_IMG_CO_ISS_1459551972_N', size='abc')
+        api.image('COISS_2001-1459551663_1459568594-N1459551972_1', size='abc')
 
 
 @responses.activate
 def test_api_file(api):
     json = open(
-        'tests/api/files/S_IMG_CO_ISS_1459551972_N.json', 'r').read()
+        'tests/api/files/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json',
+                  'http://localhost/files/COISS_2001-1459551663_1459568594-N1459551972_1.json',
                   body=json)
 
-    resp = api.file('S_IMG_CO_ISS_1459551972_N')
+    resp = api.file('COISS_2001-1459551663_1459568594-N1459551972_1')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/files/S_IMG_CO_ISS_1459551972_N.json'
+    assert responses.calls[0].request.url == 'http://localhost/files/COISS_2001-1459551663_1459568594-N1459551972_1.json'
     assert responses.calls[0].response.text == json
 
-    assert resp.ring_obs_id == 'S_IMG_CO_ISS_1459551972_N'
+    assert resp.opus_id == 'COISS_2001-1459551663_1459568594-N1459551972_1'
 
 
 @responses.activate
@@ -243,7 +243,7 @@ def test_api_files_limit_none(api):
     assert len(responses.calls) == 2
     if six.PY3:
         assert responses.calls[0].request.url == 'http://localhost/meta/result_count.json?planet=Saturn&target=pan'
-        assert responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1591'
+        assert responses.calls[1].request.url == 'http://localhost/files.json?planet=Saturn&target=pan&limit=1636'
     assert responses.calls[1].response.text == files
 
 
@@ -260,25 +260,25 @@ def test_api_mults(api):
     assert responses.calls[0].request.url == 'http://localhost/meta/mults/target.json?planet=Saturn'
     assert responses.calls[0].response.text == mults
 
-    assert len(resp) == 63
+    assert len(resp) == 67
 
 @responses.activate
 def test_api_range(api):
-    range_endpoints = open('tests/api/meta/range/endpoints/ringradius1.json', 'r').read()
+    range_endpoints = open('tests/api/meta/range/endpoints/RINGGEOringradius1.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/meta/range/endpoints/ringradius1.json',
+                  'http://localhost/meta/range/endpoints/RINGGEOringradius1.json',
                   body=range_endpoints)
 
-    resp = api.range('ringradius1', target='Saturn')
+    resp = api.range('RINGGEOringradius1', target='Saturn')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/meta/range/endpoints/ringradius1.json?target=Saturn'
+    assert responses.calls[0].request.url == 'http://localhost/meta/range/endpoints/RINGGEOringradius1.json?target=Saturn'
     assert responses.calls[0].response.text == range_endpoints
 
-    assert 'OPUS API Range endpoints for field: `ringradius1`' in repr(resp)
-    assert resp['min'] == 60000
+    assert 'OPUS API Range endpoints for field: `RINGGEOringradius1`' in repr(resp)
+    assert resp['min'] == 90.707
     assert resp['max'] == 1.29e+07
-    assert resp['null'] == 115573
+    assert resp['null'] == 125531
 
 
 @responses.activate
@@ -309,23 +309,23 @@ def test_api_fields(api):
     assert responses.calls[0].request.url == 'http://localhost/fields.json'
     assert responses.calls[0].response.text == fields
 
-    assert len(resp) == 304
+    assert len(resp) == 247
 
 
 @responses.activate
 def test_api_category(api):
-    category = open('tests/api/categories/obs_general.json', 'r').read()
+    category = open('tests/api/categories/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read()
     responses.add(responses.GET,
-                  'http://localhost/categories/obs_general.json',
+                  'http://localhost/categories/COISS_2001-1459551663_1459568594-N1459551972_1.json',
                   body=category)
 
-    resp = api.category('obs_general')
+    resp = api.category('COISS_2001-1459551663_1459568594-N1459551972_1')
 
     assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == 'http://localhost/categories/obs_general.json'
+    assert responses.calls[0].request.url == 'http://localhost/categories/COISS_2001-1459551663_1459568594-N1459551972_1.json'
     assert responses.calls[0].response.text == category
 
-    assert resp.name == 'obs_general'
+    assert len(resp) == 8
 
 
 @responses.activate
@@ -341,4 +341,4 @@ def test_api_categories(api):
     assert responses.calls[0].request.url == 'http://localhost/categories.json'
     assert responses.calls[0].response.text == categories
 
-    assert len(resp) == 3
+    assert len(resp) == 6
