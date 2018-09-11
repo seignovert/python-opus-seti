@@ -1,6 +1,6 @@
-===============================
 OPUS
 ===============================
+
 |Build| |Coverage| |PyPI| |Status| |Version| |Python| |License|
 
 .. |Build| image:: https://travis-ci.org/seignovert/python-opus-seti.svg?branch=master
@@ -63,7 +63,7 @@ Usage
     - S_IMG_CO_ISS_1488812400_N
     - S_IMG_CO_ISS_1488826725_N
 
-Mor examples are available in this
+More examples are available in this
 `Jupyter Notebook`_.
 
 .. _`Jupyter Notebook`: https://nbviewer.jupyter.org/github/seignovert/python-opus-seti/blob/master/jupyter_notebooks/examples.ipynb
