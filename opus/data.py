@@ -86,16 +86,16 @@ class DataElement(DataDict):
         self._row = row
         self._id = None
         for column, value in zip(columns, row):
-            if 'Ring Observation ID' in str(column):
+            if 'OPUS ID' in str(column):
                 self._id = value
             else:
                 self.append(column, value)
 
         if self._id is None:
-            raise KeyError('`Ring Observation ID` key is missing in `cols` query')
+            raise KeyError('`OPUS ID` key is missing in `cols` query')
 
     def __repr__(self):
-        return 'Ring Observation ID: {}\n'.format(str(self)) + \
+        return 'OPUS ID: {}\n'.format(str(self)) + \
                '\n'.join(' - {}: {}'.format(key, value) for key, value in self.items())
 
     def __str__(self):

@@ -5,17 +5,17 @@ from .wget import Downloadable
 
 
 class Image(Downloadable):
-    def __init__(self, ring_obs_id, path, img):
+    def __init__(self, opus_id, path, img):
         Downloadable.__init__(self, path + img)
-        self.ring_obs_id = ring_obs_id
+        self.opus_id = opus_id
         self.path = path
         self.img = img
 
     def __repr__(self):
-        return 'OPUS API Image object: {}'.format(self.ring_obs_id)
+        return 'OPUS API Image object: {}'.format(self.opus_id)
 
     def __str__(self):
-        return self.ring_obs_id
+        return self.opus_id
 
 
 class Images(DataDict):
@@ -24,7 +24,7 @@ class Images(DataDict):
         self._json = json
         self.size = size
         for img in json['data']:
-            el = Image(img['ring_obs_id'], img['path'], img['img'])
+            el = Image(img['opus_id'], img['path'], img['img'])
             self._data[str(el)] = el
 
     def __repr__(self):

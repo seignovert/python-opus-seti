@@ -72,9 +72,9 @@ class API(object):
             kwargs['page'] = page
         return Data(self.load('data', **kwargs))
 
-    def metadata(self, ring_obs_id):
+    def metadata(self, opus_id):
         '''Get detail for a single observation'''
-        return Metadata(self.load('metadata/'+ring_obs_id))
+        return Metadata(self.load('metadata_v2/'+opus_id))
 
     def images(self, size='med', limit=100, page=1, **kwargs):
         '''Get image results for a search'''
@@ -90,20 +90,20 @@ class API(object):
             kwargs['page'] = page
         return Images(self.load('images/'+size, **kwargs), size)
 
-    def image(self, ring_obs_id, size='med'):
+    def image(self, opus_id, size='med'):
         '''Get images for a single observation'''
         size = size.lower()
         if size not in ['thumb', 'small', 'med', 'full']:
             raise ValueError(
                 'Image size {} unknown (available: [thumb,small,med,full])'.format(size))
 
-        json = self.load('image/'+size+'/'+ring_obs_id)
-        return Image(ring_obs_id, json['path'], json['data'][0]['img'])
+        json = self.load('image/'+size+'/'+opus_id)
+        return Image(opus_id, json['path'], json['data'][0]['img'])
 
-    def file(self, ring_obs_id):
+    def file(self, opus_id):
         '''Get files for a single observation'''
-        json = self.load('files/'+ring_obs_id)
-        return File(ring_obs_id, json['data'][ring_obs_id])
+        json = self.load('files/'+opus_id)
+        return File(opus_id, json['data'][opus_id])
 
     def files(self, limit=100, page=1, **kwargs):
         '''Get all files results for a search'''
@@ -119,21 +119,21 @@ class API(object):
         field, given a search, and the result count for each value'''
         return Mults(self.load('meta/mults/'+param, **kwargs))
 
-    def range(self, param='ringradius1', **kwargs):
+    def range(self, param='RINGGEOringradius1', **kwargs):
         '''Get range endpoints for a field, given a search'''
         return Range(param, self.load('meta/range/endpoints/'+param, **kwargs))
 
     def field(self, field):
         '''Get information about a particular field'''
-        return Field(field, self.load('fields/'+field)[field])
+        return Field(field, self.load('fields/'+field)['data'][field])
 
     def fields(self):
         '''Get list of all fields'''
-        return Fields(self.load('fields'))
+        return Fields(self.load('fields')['data'])
 
-    def category(self, name='obs_general'):
+    def category(self, opus_id):
         '''Get all fields in a category'''
-        return Category(self.load('categories/'+name))
+        return Categories(self.load('categories/'+opus_id))
 
     def categories(self):
         '''List category names'''

@@ -68,21 +68,21 @@ def data(argv=None, desc='Get Data from OPUS-SETI API', args=[], defaults={}, ap
 def metadata(argv=None, api=api):
     '''OPUS SETI API metadata entry point'''
     parser = argparse.ArgumentParser(description='Get detail for a single observation from OPUS-SETI API')
-    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    parser.add_argument('opus_id', help='Valid OPUS ID')
     args, others = parser.parse_known_args(argv)
 
-    return api.metadata(args.ring_obs_id)
+    return api.metadata(args.opus_id)
 
 def image(argv=None, api=api):
     '''OPUS SETI API images/previews entry point'''
     parser = argparse.ArgumentParser(description='Get image for a single observation from OPUS-SETI API')
-    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    parser.add_argument('opus_id', help='Valid opus_id')
     parser.add_argument('-s', '--size', help='Image size', default='med', choices=['thumb', 'small', 'med', 'full'])
     parser.add_argument('-d', '--download', help='Download the image', action='store_true')
     parser.add_argument('-o', '--output', help='Output folder/filename for download', default=None)
     args, others = parser.parse_known_args(argv)
 
-    img = api.image(args.ring_obs_id, size=args.size)
+    img = api.image(args.opus_id, size=args.size)
     if args.download or args.output is not None:
         return img.download(out=args.output)
     return img.url
@@ -90,13 +90,13 @@ def image(argv=None, api=api):
 def files(argv=None, api=api):
     '''OPUS SETI API files entry point'''
     parser = argparse.ArgumentParser(description='Get files for a single observation from OPUS-SETI API')
-    parser.add_argument('ring_obs_id', help='Valid ring_obs_id')
+    parser.add_argument('opus_id', help='Valid opus_id')
     parser.add_argument('-f', '--fmt', help='File format', default=None, nargs=2, metavar=('GROUP','FORMAT'))
     parser.add_argument('-d', '--download', help='Download the image', action='store_true')
     parser.add_argument('-o', '--output', help='Output folder/filename for download', default=None)
     args, others = parser.parse_known_args(argv)
 
-    files = api.file(args.ring_obs_id)
+    files = api.file(args.opus_id)
     if args.fmt is not None:
         files = files[args.fmt[0]][args.fmt[1]]
         if args.download or args.output is not None:
@@ -115,7 +115,4 @@ def field(argv=None, api=api):
     try:
         return api.field(args.field)
     except KeyError:
-        try:
-            return api.fields()[args.field]
-        except KeyError:
-            return 'Unknown field. To list all the available fields, run: `opus-field --all`'
+        return 'Unknown field. To list all the available fields, run: `opus-field --all`'

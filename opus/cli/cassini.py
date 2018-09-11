@@ -8,7 +8,7 @@ api = API()
 def vims(argv=None, api=api):
     '''Cassini VIMS data entry point'''
     return data(argv, desc='Get Cassini VIMS Images and Cubes from OPUS API',
-                args=[{'surfacegeometrytargetname': {'help': 'VIMS target name', 'metavar': 'TARGET_NAME'}},
-                      {'--cols': {'default': 'ringobsid,target,revno,time1,primaryfilespec,channel',
+                args=[{'target': {'help': 'VIMS target name', 'metavar': 'TARGET_NAME'}},
+                      {'--cols': {'default': 'opusid,target,revno,time1,primaryfilespec',
                                   'help': 'Output columns (default: `ringobsid,target,revno,time1,primaryfilespec,channel`)'}}],
-                defaults={'instrumentid': 'Cassini+VIMS', 'typeid': 'Image,Cube'}, api=api)
+                defaults={'instrumentid': 'Cassini+VIMS', 'COVIMSswathlength1': 2, 'COVIMSswathwidth1': 2}, api=api)

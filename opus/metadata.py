@@ -7,6 +7,8 @@ from .data import DataDict
 
 def read_time(time):
     '''Read date time'''
+    if time == 'No':
+        return None
     try:
         return dt.strptime(time, '%Y-%m-%dT%H:%M:%S.%f')
     except ValueError:
@@ -25,10 +27,10 @@ class Metadata(DataDict):
             value = Constraints(key, constraints)
             self.append(key, value)
 
-        self.ring_obs_id = self['GENERAL']['ring_obs_id']
+        self.opus_id = self['GENERAL']['opusid']
 
     def __repr__(self):
-        return 'OPUS API Metadata Ring observation: {}\n'.format(self.ring_obs_id) + \
+        return 'OPUS API Metadata Ring observation: {}\n'.format(self.opus_id) + \
                '\n'.join('\n{}'.format(values) for values in self.values())
 
 
@@ -36,10 +38,7 @@ class Constraints(DataDict):
     def __init__(self, name, constraints={}):
         DataDict.__init__(self)
         self.name = name
-        for key, value in constraints.items():
-            if key == 'is_image':
-                value = (value == 1)
-            
+        for key, value in constraints.items():            
             if 'time' in key and isinstance(value, six.text_type):
                 value = read_time(value)
 

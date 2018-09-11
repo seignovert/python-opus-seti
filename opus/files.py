@@ -6,26 +6,30 @@ from .wget import Downloadable
 
 class File(DataDict):
     '''Files for a single observation'''
-    def __init__(self, ring_obs_id, data):
+    def __init__(self, opus_id, data):
         DataDict.__init__(self)
-        self.ring_obs_id = ring_obs_id
+        self.opus_id = opus_id
         
         for label, files in data.items():
-            if label == 'preview_image':
-                key = 'PREVIEWS'
+            if 'Browse Image' in label:
                 value = Preview(files)
             else:
-                key = label.upper()
                 value = FileList(files)
+            key = label.replace('Browse Image ', '')\
+                    .replace(' (calibrated unavailable)', '')\
+                    .upper()\
+                    .replace(' ', '_')\
+                    .replace('(', '')\
+                    .replace(')', '')
 
             self.append(key, value)
 
     def __repr__(self):
-        return 'OPUS API Files for observation: {}\n'.format(self.ring_obs_id) + \
+        return 'OPUS API Files for observation: {}\n'.format(self.opus_id) + \
                '\n'.join('\n=> {}\n{}'.format(key, value) for key, value in self.items())
 
     def __str__(self):
-        return self.ring_obs_id
+        return self.opus_id
 
 
 class Preview(DataDict):
@@ -44,14 +48,14 @@ class FileList(DataDict):
     def __init__(self, files=[]):
         DataDict.__init__(self)
         for f in files:
-            if f.endswith('.LBL'):
+            if f.lower().endswith('.lbl'):
                 key = 'LBL'
             elif f.endswith('.IMG'):
                 key = 'IMG'
             elif f.endswith('.qub'):
                 key = 'qub'
-            elif f.endswith('.QUB'):
-                key = 'QUB'
+            elif f.endswith('.tab'):
+                key = 'TAB'
             elif f.lower().endswith('.fmt'):
                 key = f.lower().split('/')[-1].replace('.fmt', '')
             else:
