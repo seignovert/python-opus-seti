@@ -16,9 +16,7 @@ jobs:
       if: tag IS present
       python: 3.6
       env: PBR_VERSION=$TRAVIS_TAG
-      install: skip
       script: skip
-      after_success: skip
       deploy:
         provider: pypi
         user: seignovert
