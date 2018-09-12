@@ -8,11 +8,15 @@ OPUS
 .. |Coverage| image:: https://coveralls.io/repos/github/seignovert/python-opus-seti/badge.svg?branch=master
         :target: https://coveralls.io/github/seignovert/python-opus-seti?branch=master
 .. |PyPI| image:: https://img.shields.io/badge/PyPI-opus--seti-blue.svg
-        :target: https://pypi.python.org/project/opus-seti
+        :target: https://pypi.org/project/opus-seti
 .. |Status| image:: https://img.shields.io/pypi/status/opus-seti.svg?label=Status
+        :target: https://pypi.org/project/opus-seti
 .. |Version| image:: https://img.shields.io/pypi/v/opus-seti.svg?label=Version
+        :target: https://pypi.org/project/opus-seti
 .. |Python| image:: https://img.shields.io/pypi/pyversions/opus-seti.svg?label=Python
+        :target: https://pypi.org/project/opus-seti
 .. |License| image:: https://img.shields.io/pypi/l/opus-seti.svg?label=License
+        :target: https://pypi.org/project/opus-seti
 
 Python package for OPUS-Seti_ API_ (`NASA-PDS Rings Node`_)
 
