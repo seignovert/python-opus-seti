@@ -1,7 +1,7 @@
 OPUS
 ===============================
 
-|Build| |Coverage| |PyPI| |Status| |Version| |Python| |License|
+|Build| |Coverage| |PyPI| |Status| |Version| |Python| |License| |DOI|
 
 .. |Build| image:: https://travis-ci.org/seignovert/python-opus-seti.svg?branch=master
         :target: https://travis-ci.org/seignovert/python-opus-seti
@@ -17,6 +17,8 @@ OPUS
         :target: https://pypi.org/project/opus-seti
 .. |License| image:: https://img.shields.io/pypi/l/opus-seti.svg?label=License
         :target: https://pypi.org/project/opus-seti
+.. |DOI| image:: https://www.zenodo.org/badge/134827243.svg
+        :target: https://www.zenodo.org/badge/latestdoi/134827243
 
 Python package for OPUS-Seti_ API_ (`NASA-PDS Rings Node`_)
 
