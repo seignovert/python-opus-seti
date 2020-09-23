@@ -56,8 +56,10 @@ class FileList(DataDict):
                 key = 'qub'
             elif f.endswith('.tab'):
                 key = 'TAB'
-            elif f.endswith('.jpg'):
+            elif f.endswith(('.jpg', '.jpeg', '.jpeg_small')):
                 key = 'JPG'
+            elif f.endswith('.png'):
+                key = 'PNG'
             elif f.lower().endswith('.fmt'):
                 key = f.lower().split('/')[-1].replace('.fmt', '')
             else:

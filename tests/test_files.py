@@ -12,9 +12,14 @@ def files():
     return Files(json)
 
 @pytest.fixture
-def file_iss(files):
+def file_iss_old(files):
     json = JSON.loads(open('tests/api/files/COISS_2001-1459551663_1459568594-N1459551972_1.json', 'r').read())
     return File('COISS_2001-1459551663_1459568594-N1459551972_1', json['data']['COISS_2001-1459551663_1459568594-N1459551972_1'])
+
+@pytest.fixture
+def file_iss(files):
+    json = JSON.loads(open('tests/api/files/co-iss-n1487299402.json', 'r').read())
+    return File('co-iss-n1487299402', json['data']['co-iss-n1487299402'])
 
 @pytest.fixture
 def file_vims(files):
@@ -32,20 +37,38 @@ def test_file_meta(file_vims):
     assert str(file_vims) == 'COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS'
     assert file_vims.opus_id == 'COVIMS_0020-2007137T054828_2007143T180509-v1558621524_1_VIS'
 
-def test_file_previews(file_iss):
-    previews = file_iss['FULL-SIZE']
+def test_file_previews(file_iss_old):
+    previews = file_iss_old['FULL-SIZE']
     assert str(previews['full']) == 'https://pds-rings.seti.org/holdings/previews/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_full.jpg'
 
-def test_file_list_iss(file_iss):
-    raw_image = file_iss['RAW_DATA']
+def test_file_list_iss_old(file_iss_old):
+    raw_image = file_iss_old['RAW_DATA']
     assert str(raw_image['LBL']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1.LBL'
     assert str(raw_image['IMG']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1.IMG'
     assert str(raw_image['prefix2']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/label/prefix2.fmt'
     assert str(raw_image['tlmtab']) == 'https://pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2001/label/tlmtab.fmt'
 
-    calibrated = file_iss['CALIBRATED_DATA']
+    calibrated = file_iss_old['CALIBRATED_DATA']
     assert str(calibrated['IMG']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.IMG'
     assert str(calibrated['LBL']) == 'https://pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2001/data/1459551663_1459568594/N1459551972_1_CALIB.LBL'
+
+
+def test_file_list_iss(file_iss):
+    raw_image = file_iss['COISS_RAW']
+    assert str(raw_image['IMG']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/data/1487182149_1487415680/N1487299402_1.IMG'
+    assert str(raw_image['LBL']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/data/1487182149_1487415680/N1487299402_1.LBL'
+    assert str(raw_image['prefix2']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/label/prefix2.fmt'
+    assert str(raw_image['tlmtab']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/label/tlmtab.fmt'
+
+    calibrated = file_iss['COISS_CALIB']
+    assert str(calibrated['IMG']) == 'https://opus.pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2009/data/1487182149_1487415680/N1487299402_1_CALIB.IMG'
+    assert str(calibrated['LBL']) == 'https://opus.pds-rings.seti.org/holdings/calibrated/COISS_2xxx/COISS_2009/data/1487182149_1487415680/N1487299402_1_CALIB.LBL'
+
+    thumb = file_iss['COISS_THUMB']
+    assert str(thumb['JPG']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/extras/thumbnail/1487182149_1487415680/N1487299402_1.IMG.jpeg_small'
+
+    full = file_iss['COISS_FULL']
+    assert str(full['PNG']) == 'https://opus.pds-rings.seti.org/holdings/volumes/COISS_2xxx/COISS_2009/extras/full/1487182149_1487415680/N1487299402_1.IMG.png'
 
 
 def test_file_list_vims(file_vims):
