@@ -9,7 +9,7 @@ class File(DataDict):
     def __init__(self, opus_id, data):
         DataDict.__init__(self)
         self.opus_id = opus_id
-        
+
         for label, files in data.items():
             if 'Browse Image' in label:
                 value = Preview(files)
@@ -56,6 +56,8 @@ class FileList(DataDict):
                 key = 'qub'
             elif f.endswith('.tab'):
                 key = 'TAB'
+            elif f.endswith('.jpg'):
+                key = 'JPG'
             elif f.lower().endswith('.fmt'):
                 key = f.lower().split('/')[-1].replace('.fmt', '')
             else:
